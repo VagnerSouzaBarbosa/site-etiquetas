@@ -51,12 +51,11 @@
       background-position: center center;
       background-attachment: fixed;
     }
-    /* CORREÇÃO: Planos de fundo aplicados aqui */
     html.light-mode body {
-        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('planodefundo.png');
+        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('planodefundo.jpg');
     }
     html.dark-mode body {
-        background-image: linear-gradient(rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.95)), url('planodefundoescuro.png');
+        background-image: linear-gradient(rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.95)), url('planodefundoescuro.jpg');
     }
     .app-layout {
         display: flex;
@@ -145,7 +144,7 @@
         flex-direction: column;
     }
     .notice-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-5px) scale(1.02);
         box-shadow: 0 12px 20px rgba(0,0,0,0.08);
         border-color: var(--accent-color);
     }
@@ -178,30 +177,35 @@
         transition: opacity 0.5s ease-in-out;
         font-weight: 700;
     }
-    .calendar { margin-top: 1rem; margin-bottom: 1rem; }
+    .calendar { margin-top: 1rem; margin-bottom: 1rem; position: relative; }
     .calendar-header { text-align: center; font-weight: 700; margin-bottom: 0.75rem; font-size: 1.1rem; }
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
     .calendar-grid .weekday { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
     .calendar-grid .day { padding: 6px; border-radius: 50%; font-size: 0.9rem; line-height: 1.5; cursor: default; }
     .calendar-grid .day.event { cursor: pointer; transition: transform 0.2s; }
-    .calendar-grid .day.event:hover { transform: scale(1.1); }
+    .calendar-grid .day.event:hover { transform: scale(1.2); }
     .calendar-grid .day.event-lanche { background-color: var(--accent-color); color: #0a192f; font-weight: 700; }
     .calendar-grid .day.event-interior { background-color: var(--success-color); color: white; font-weight: 700; }
     .calendar-grid .day.event-coleta { background-color: var(--coleta-color); color: white; font-weight: 700; }
     .calendar-legend { margin-top: 1rem; font-size: 0.85rem; }
     .calendar-legend div { display: flex; align-items: center; margin-bottom: 0.35rem; }
     .calendar-legend .color-box { width: 15px; height: 15px; margin-right: 8px; border-radius: 4px; }
-    .calendar-info-display {
-        margin-top: 1rem;
+    #calendar-tooltip {
+        position: absolute;
+        display: none;
+        background-color: var(--card-bg-dark);
+        color: var(--text-dark);
+        border: 1px solid var(--accent-color);
         padding: 0.75rem;
-        background-color: var(--bg);
         border-radius: 8px;
-        min-height: 50px;
+        box-shadow: var(--shadow);
+        z-index: 10;
+        pointer-events: none;
         font-size: 0.9rem;
-        font-weight: 500;
-        text-align: center;
-        transition: var(--transition);
-        color: var(--text-muted);
+        max-width: 200px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.3s, transform 0.3s;
     }
     
     .report-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2.5rem; }
@@ -286,6 +290,7 @@
   </style>
 </head>
 <body>
+  <div id="calendar-tooltip"></div>
   <div class="app-layout">
     <aside class="sidebar sidebar-left">
         <div class="notice-card">
@@ -302,7 +307,6 @@
                   <span class="day">27</span><span class="day event event-coleta">28</span><span class="day event event-coleta">29</span><span class="day">30</span><span class="day">31</span>
                 </div>
               </div>
-              <div class="calendar-info-display">Passe o rato sobre uma data para ver os detalhes.</div>
               <div class="calendar-legend">
                 <div><span class="color-box" style="background-color: var(--accent-color);"></span> Lanches e Mat. Expediente</div>
                 <div><span class="color-box" style="background-color: var(--success-color);"></span> Pedido Unidades Interior</div>
@@ -429,7 +433,7 @@
     </div>
     
     <aside class="sidebar sidebar-right">
-        <div class="notice-card">
+        <div class="notice-card" id="attention-card">
             <div class="notice-card-content">
               <h3><i class="fas fa-info-circle"></i> Atenção às Requisições</h3>
               <p class="rotating-message"></p>
@@ -478,6 +482,7 @@
       const TOTAL_UNIDADES = unidades.length;
       let chartInstances = {};
       let allFeedbacks = []; // Cache local dos dados
+      let messageIntervalId = null;
 
       // --- SELETORES DE DOM ---
       const dom = {
@@ -503,7 +508,9 @@
         numericalSummary: document.getElementById('numerical-summary'),
         registerBtn: document.getElementById('registerBtn'),
         rotatingMessages: document.querySelectorAll('.rotating-message'),
-        calendarGrids: document.querySelectorAll('.calendar-grid')
+        calendarGrids: document.querySelectorAll('.calendar-grid'),
+        calendarTooltip: document.getElementById('calendar-tooltip'),
+        attentionCard: document.getElementById('attention-card')
       };
 
       // --- SERVIÇOS DE DADOS E UI ---
@@ -602,20 +609,21 @@
                 "Mais que pedir, é preciso justificar e planejar."
             ];
             let messageIndex = 0;
-            if (dom.rotatingMessages.length > 0) {
-                setInterval(() => {
-                    messageIndex = (messageIndex + 1) % messages.length;
-                    dom.rotatingMessages.forEach(el => {
-                        el.style.opacity = 0;
-                        setTimeout(() => {
-                            el.textContent = `"${messages[messageIndex]}"`;
-                            el.style.opacity = 1;
-                        }, 500);
-                    });
-                }, 5000);
+            
+            const updateMessage = () => {
+                messageIndex = (messageIndex + 1) % messages.length;
                 dom.rotatingMessages.forEach(el => {
-                    el.textContent = `"${messages[0]}"`;
+                    el.style.opacity = 0;
+                    setTimeout(() => {
+                        el.textContent = `"${messages[messageIndex]}"`;
+                        el.style.opacity = 1;
+                    }, 500);
                 });
+            };
+
+            if (dom.rotatingMessages.length > 0) {
+                dom.rotatingMessages.forEach(el => el.textContent = `"${messages[0]}"`);
+                messageIntervalId = setInterval(updateMessage, 5000);
             }
         },
         setupCalendars: () => {
@@ -624,33 +632,36 @@
               'event-interior': 'Dias 21 e 22: Interior Todos os Grupos.',
               'event-coleta': 'Dias 28 e 29: Coleta e Lanche.'
             };
-            const defaultInfoText = 'Passe o rato sobre uma data para ver os detalhes.';
-
+            
             dom.calendarGrids.forEach(grid => {
-                const infoDisplay = grid.closest('.notice-card-content').querySelector('.calendar-info-display');
-                if (!infoDisplay) return;
-
-                infoDisplay.textContent = defaultInfoText;
-
                 grid.addEventListener('mouseover', (e) => {
                     const target = e.target;
                     if (!target.classList.contains('event')) return;
 
-                    let description = defaultInfoText;
-                    if (target.classList.contains('event-lanche')) {
-                        description = eventDescriptions['event-lanche'];
-                    } else if (target.classList.contains('event-interior')) {
-                        description = eventDescriptions['event-interior'];
-                    } else if (target.classList.contains('event-coleta')) {
-                        description = eventDescriptions['event-coleta'];
-                    }
-                    infoDisplay.textContent = description;
+                    let description = '';
+                    if (target.classList.contains('event-lanche')) description = eventDescriptions['event-lanche'];
+                    else if (target.classList.contains('event-interior')) description = eventDescriptions['event-interior'];
+                    else if (target.classList.contains('event-coleta')) description = eventDescriptions['event-coleta'];
+                    
+                    const rect = target.getBoundingClientRect();
+                    const tooltip = dom.calendarTooltip;
+                    tooltip.textContent = description;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${rect.left + rect.width / 2 - tooltip.offsetWidth / 2}px`;
+                    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
+                    setTimeout(() => {
+                        tooltip.style.opacity = 1;
+                        tooltip.style.transform = 'translateY(0)';
+                    }, 10);
                 });
 
                 grid.addEventListener('mouseout', (e) => {
                     const target = e.target;
                     if (target.classList.contains('event')) {
-                         infoDisplay.textContent = defaultInfoText;
+                        const tooltip = dom.calendarTooltip;
+                        tooltip.style.opacity = 0;
+                        tooltip.style.transform = 'translateY(10px)';
+                        setTimeout(() => { tooltip.style.display = 'none'; }, 300);
                     }
                 });
             });
@@ -671,6 +682,12 @@
           dom.generateAiTextBtn.addEventListener('click', app.handleGenerateAiReport);
           dom.copyReportBtn.addEventListener('click', () => navigator.clipboard.writeText(dom.aiReportOutput.textContent).then(() => uiService.showModal('Copiado!', '<p>Relatório copiado para a área de transferência.</p>')));
           dom.generatePdfBtn.addEventListener('click', app.handleGeneratePdf);
+
+          const attentionCard = document.querySelector('.sidebar-right .notice-card');
+          if(attentionCard) {
+              attentionCard.addEventListener('mouseenter', () => clearInterval(messageIntervalId));
+              attentionCard.addEventListener('mouseleave', () => app.startRotatingMessages());
+          }
 
           dom.mainModal.querySelectorAll('.close-btn').forEach(btn => btn.onclick = () => dom.mainModal.style.display = 'none');
           dom.mainModal.onclick = (event) => { if (event.target === dom.mainModal) dom.mainModal.style.display = 'none'; };
