@@ -3,11 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Registro de Falhas de Etiquetas</title>
-  <!-- Favicons Adicionados -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/x-icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdRZj6UwfwUFfvlmCfFUDzQMDJz7YZioF_de0F8SLA5yHB8dxPEFCCUgEDGW4ERl8-fI&usqp=CAU">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,10 +22,30 @@
     html.dark-mode { --bg: var(--bg-dark); --card-bg: var(--card-bg-dark); --text-primary: var(--text-dark); --text-muted: var(--text-muted-dark); --border-color: var(--border-dark); }
     * { box-sizing: border-box; margin:0; padding:0; }
     body {
-      background-color: var(--bg); color: var(--text-primary); font-family: 'Inter', sans-serif;
-      display: flex; justify-content: center; align-items: flex-start; padding: 2rem 1rem; min-height: 100vh; transition: var(--transition);
+      color: var(--text-primary); font-family: 'Inter', sans-serif;
+      padding: 2rem 1rem; min-height: 100vh; transition: var(--transition);
+      background-size: cover;
+      background-position: center center;
+      background-attachment: fixed;
     }
-    .container { width: 100%; max-width: 850px; }
+    html.light-mode body {
+        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('crie uma imagem responsivo .jpg');
+    }
+    html.dark-mode body {
+        background-image: linear-gradient(rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.95)), url('crie uma imagem responsivo .jpg');
+    }
+    .app-layout {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+    .main-content {
+        width: 100%;
+        max-width: 850px;
+        flex-shrink: 0;
+    }
     .card { background-color: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); transition: var(--transition); overflow: hidden; }
     .header {
       background: var(--accent-color); color: white; display: flex; align-items: center; justify-content: space-between; padding: 1.5rem;
@@ -75,14 +91,69 @@
     .page.active { display: block; animation: fadeInPage 0.5s ease-out; }
     @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
 
+    /* Estilos do Mural de Avisos */
+    .notice-board {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+    .notice-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+    }
+    .notice-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.08);
+    }
+    .notice-card-content {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    .notice-card-content h3 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .notice-card-content .btn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+        margin-top: auto;
+    }
+    .rotating-message {
+        font-size: 1.05rem;
+        line-height: 1.6;
+        color: var(--text-primary);
+        margin: 1rem 0;
+        min-height: 100px; 
+        transition: opacity 0.5s ease-in-out;
+        font-weight: 700;
+    }
+    .calendar { margin-top: 1rem; margin-bottom: 1rem; }
+    .calendar-header { text-align: center; font-weight: 700; margin-bottom: 0.75rem; font-size: 1.1rem; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+    .calendar-grid .weekday { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
+    .calendar-grid .day { padding: 6px; border-radius: 50%; font-size: 0.9rem; line-height: 1.5; cursor: default; }
+    .calendar-grid .day.event-lanche { background-color: var(--accent-color); color: white; font-weight: 700; }
+    .calendar-grid .day.event-interior { background-color: var(--success-color); color: white; font-weight: 700; }
+    .calendar-legend { margin-top: 1rem; font-size: 0.85rem; }
+    .calendar-legend div { display: flex; align-items: center; margin-bottom: 0.35rem; }
+    .calendar-legend .color-box { width: 15px; height: 15px; margin-right: 8px; border-radius: 4px; }
+    
     .report-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2.5rem; }
     .chart-card { 
-      background-color: var(--card-bg); 
-      padding: 1.5rem; 
-      border-radius: var(--radius); 
-      border: 1px solid var(--border-color);
-      position: relative;
-      height: 350px; 
+      background-color: var(--card-bg); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border-color);
+      position: relative; height: 350px; 
     }
     .chart-card h3 { text-align: center; margin-bottom: 1.5rem; font-family: 'Poppins', sans-serif; font-size: 1.1rem; }
     #ai-report-section { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: var(--radius); }
@@ -108,88 +179,176 @@
     .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
     .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; color: var(--accent-color); }
     .modal-header .close-btn { font-size: 1.8rem; cursor: pointer; color: var(--text-muted); background: none; border: none; }
+    
+    /* CORREÇÃO: CSS Responsivo para Sidebars */
+    .sidebar { display: none; }
+    .notice-board-inline { display: block; }
+
+    @media (min-width: 1300px) {
+        .app-layout {
+            gap: 2rem;
+            justify-content: center;
+        }
+        .sidebar {
+            display: block;
+            width: 320px;
+            position: sticky;
+            top: 2rem;
+            flex-shrink: 0;
+        }
+        .notice-board-inline {
+            display: none;
+        }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- PÁGINA PRINCIPAL -->
-    <div id="main-page" class="page active">
-      <div class="card">
-        <header class="header">
-          <div class="header-title">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdRZj6UwfwUFfvlmCfFUDzQMDJz7YZioF_de0F8SLA5yHB8dxPEFCCUgEDGW4ERl8-fI&usqp=CAU" alt="Logo">
-            <h1>Registro de Falhas</h1>
-          </div>
-          <div class="header-actions">
-            <button id="aiReportBtn" title="Relatório IA"><i class="fas fa-robot"></i></button>
-            <button id="themeToggleBtn" title="Alternar Modo"><i class="fas fa-moon"></i></button>
-            <button id="infoBtn" title="Sobre esta página"><i class="fas fa-info-circle"></i></button>
-            <button id="viewRecordsBtn" title="Ver Registros"><i class="fas fa-list-alt"></i></button>
-          </div>
-        </header>
-        <main class="body">
-          <section id="form-section">
-            <h2><i class="fas fa-pencil-alt"></i> Novo Registro de Falha</h2>
-            <form id="feedForm" novalidate>
-              <div class="form-group"><label for="data"><i class="fas fa-calendar-alt"></i> Data da Ocorrência</label><input type="date" id="data" name="data" required></div>
-              <div class="form-group"><label for="unidade"><i class="fas fa-building"></i> Unidade</label><select id="unidade" name="unidade" required><option value="" disabled selected>Selecione a unidade</option></select></div>
-              <div class="form-group"><label for="responsavel"><i class="fas fa-user"></i> Responsável pelo Registro</label><input type="text" id="responsavel" name="responsavel" required placeholder="Seu nome completo"></div>
-              <div class="form-group"><label for="quantidade"><i class="fas fa-sort-numeric-up"></i> Quantidade de Falhas</label><input type="number" id="quantidade" name="quantidade" min="1" required></div>
-              <div class="form-group"><label for="comentario"><i class="fas fa-comment-dots"></i> O que está acontecendo com as etiquetas?</label><textarea id="comentario" name="comentario" rows="4" required placeholder="Ex.: A etiqueta está descolando do tubo na lateral esquerda, a impressão está falhando..."></textarea></div>
-              <div class="form-group"><label for="foto"><i class="fas fa-camera"></i> Foto da Falha (Opcional)</label><input type="file" id="foto" name="foto" accept="image/*"></div>
-              
-              <div class="actions">
-                <button type="submit" class="btn" id="registerBtn"><i class="fas fa-paper-plane"></i> Registrar Falha</button>
+  <div class="app-layout">
+    <aside class="sidebar sidebar-left">
+        <div class="notice-card">
+            <div class="notice-card-content">
+              <h3>Julho - Cronograma de Envio</h3>
+              <div class="calendar">
+                <div class="calendar-header">Julho 2025</div>
+                <div class="calendar-grid">
+                  <span class="weekday">D</span><span class="weekday">S</span><span class="weekday">T</span><span class="weekday">Q</span><span class="weekday">Q</span><span class="weekday">S</span><span class="weekday">S</span>
+                  <span></span><span></span><span class="day">1</span><span class="day">2</span><span class="day">3</span><span class="day">4</span><span class="day">5</span>
+                  <span class="day">6</span><span class="day event-lanche">7</span><span class="day event-lanche">8</span><span class="day event-lanche">9</span><span class="day">10</span><span class="day">11</span><span class="day">12</span>
+                  <span class="day">13</span><span class="day">14</span><span class="day">15</span><span class="day">16</span><span class="day">17</span><span class="day">18</span><span class="day">19</span>
+                  <span class="day">20</span><span class="day event-interior">21</span><span class="day event-interior">22</span><span class="day">23</span><span class="day">24</span><span class="day">25</span><span class="day">26</span>
+                  <span class="day">27</span><span class="day">28</span><span class="day">29</span><span class="day">30</span><span class="day">31</span>
+                </div>
               </div>
-            </form>
-          </section>
-          <section id="data-section">
-            <h2><i class="fas fa-chart-pie"></i> Resumo Geral</h2><div id="numerical-summary" class="numerical-summary"></div>
-          </section>
-          <section id="checklist-section">
-            <h2><i class="fas fa-tasks"></i> Status de Registro por Unidade</h2><div class="checklist"><div id="checklist-container"></div></div>
-          </section>
-          <div id="counters">
-            <p id="checklist-count">Unidades com registro: 0 / 0</p><p id="visitor-count">Total de Visitas: 0</p>
-          </div>
-        </main>
-      </div>
-    </div>
-
-    <!-- PÁGINA DE RELATÓRIO -->
-    <div id="report-page" class="page">
-      <div class="card">
-        <div id="report-content-to-print">
-            <header class="header">
-              <div class="header-title"><h1><i class="fas fa-robot"></i> Relatório de Análise</h1></div>
-              <div class="header-actions"><button id="backToMainBtn" title="Voltar"><i class="fas fa-arrow-left"></i></button></div>
-            </header>
-            <main class="body">
-              <section>
-                <h2><i class="fas fa-chart-pie"></i> Análise Gráfica</h2>
-                <div class="report-charts">
-                  <div class="chart-card"><h3>Distribuição de Falhas por Unidade</h3><canvas id="failuresByUnitChart"></canvas></div>
-                  <div class="chart-card"><h3>Unidades com/sem Registro</h3><canvas id="reportingUnitsChart"></canvas></div>
-                  <div class="chart-card"><h3>Top 5 Unidades com Mais Falhas</h3><canvas id="topUnitsChart"></canvas></div>
-                </div>
-              </section>
-              <section id="ai-report-section">
-                <h2><i class="fas fa-magic"></i> Relatório para Fornecedor (Gerado por IA)</h2>
-                <div id="ai-report-output" style="margin-top:0;">Clique no botão "Gerar Análise" abaixo para criar o relatório...</div>
-              </section>
-            </main>
-        </div>
-        <div class="body" style="padding-top: 0;">
-            <div class="form-navigation" style="justify-content: space-between;">
-                <button class="btn" id="generateAiTextBtn"><i class="fas fa-cogs"></i> Gerar Análise</button>
-                <div>
-                  <button class="btn secondary" id="copyReportBtn" disabled><i class="fas fa-copy"></i> Copiar</button>
-                  <button class="btn" id="generatePdfBtn" disabled style="margin-left: 1rem; background-color: var(--danger-color);"><i class="fas fa-file-pdf"></i> Gerar PDF</button>
-                </div>
+              <div class="calendar-legend">
+                <div><span class="color-box" style="background-color: var(--accent-color);"></span> Lanches e Mat. Expediente</div>
+                <div><span class="color-box" style="background-color: var(--success-color);"></span> Pedido Unidades Interior</div>
+              </div>
+              <a href="https://shiftlis.roseannedore.com.br/" class="btn" target="_blank" rel="noopener noreferrer">SHIFT</a>
             </div>
         </div>
-      </div>
+    </aside>
+
+    <div class="main-content">
+        <!-- PÁGINA PRINCIPAL -->
+        <div id="main-page" class="page active">
+          <div class="card">
+            <header class="header">
+              <div class="header-title">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdRZj6UwfwUFfvlmCfFUDzQMDJz7YZioF_de0F8SLA5yHB8dxPEFCCUgEDGW4ERl8-fI&usqp=CAU" alt="Logo">
+                <h1>Registro de Falhas</h1>
+              </div>
+              <div class="header-actions">
+                <button id="aiReportBtn" title="Relatório IA"><i class="fas fa-robot"></i></button>
+                <button id="themeToggleBtn" title="Alternar Modo"><i class="fas fa-moon"></i></button>
+                <button id="infoBtn" title="Sobre esta página"><i class="fas fa-info-circle"></i></button>
+                <button id="viewRecordsBtn" title="Ver Registros"><i class="fas fa-list-alt"></i></button>
+              </div>
+            </header>
+            <main class="body">
+              <section id="form-section">
+                <h2><i class="fas fa-pencil-alt"></i> Novo Registro de Falha</h2>
+                <form id="feedForm" novalidate>
+                  <div class="form-group"><label for="data"><i class="fas fa-calendar-alt"></i> Data da Ocorrência</label><input type="date" id="data" name="data" required></div>
+                  <div class="form-group"><label for="unidade"><i class="fas fa-building"></i> Unidade</label><select id="unidade" name="unidade" required><option value="" disabled selected>Selecione a unidade</option></select></div>
+                  <div class="form-group"><label for="responsavel"><i class="fas fa-user"></i> Responsável</label><input type="text" id="responsavel" name="responsavel" required placeholder="Seu nome completo"></div>
+                  <div class="form-group"><label for="quantidade"><i class="fas fa-sort-numeric-up"></i> Quantidade</label><input type="number" id="quantidade" name="quantidade" min="1" required></div>
+                  <div class="form-group"><label for="comentario"><i class="fas fa-comment-dots"></i> Descrição da Falha</label><textarea id="comentario" name="comentario" rows="4" required placeholder="Ex.: A etiqueta está descolando..."></textarea></div>
+                  <div class="form-group"><label for="foto"><i class="fas fa-camera"></i> Foto (Opcional)</label><input type="file" id="foto" name="foto" accept="image/*"></div>
+                  <div class="actions"><button type="submit" class="btn" id="registerBtn"><i class="fas fa-paper-plane"></i> Registrar Falha</button></div>
+                </form>
+              </section>
+              <section id="data-section">
+                <h2><i class="fas fa-chart-pie"></i> Resumo Geral</h2><div id="numerical-summary" class="numerical-summary"></div>
+              </section>
+              
+              <!-- CORREÇÃO: Mural de Avisos para telas menores -->
+              <section class="notice-board-inline">
+                  <h2><i class="fas fa-bullhorn"></i> Comunicados</h2>
+                  <div class="notice-board">
+                    <div class="notice-card">
+                        <div class="notice-card-content">
+                          <h3>Julho - Cronograma de Envio</h3>
+                          <div class="calendar">
+                            <div class="calendar-header">Julho 2025</div>
+                            <div class="calendar-grid">
+                              <span class="weekday">D</span><span class="weekday">S</span><span class="weekday">T</span><span class="weekday">Q</span><span class="weekday">Q</span><span class="weekday">S</span><span class="weekday">S</span>
+                              <span></span><span></span><span class="day">1</span><span class="day">2</span><span class="day">3</span><span class="day">4</span><span class="day">5</span>
+                              <span class="day">6</span><span class="day event-lanche">7</span><span class="day event-lanche">8</span><span class="day event-lanche">9</span><span class="day">10</span><span class="day">11</span><span class="day">12</span>
+                              <span class="day">13</span><span class="day">14</span><span class="day">15</span><span class="day">16</span><span class="day">17</span><span class="day">18</span><span class="day">19</span>
+                              <span class="day">20</span><span class="day event-interior">21</span><span class="day event-interior">22</span><span class="day">23</span><span class="day">24</span><span class="day">25</span><span class="day">26</span>
+                              <span class="day">27</span><span class="day">28</span><span class="day">29</span><span class="day">30</span><span class="day">31</span>
+                            </div>
+                          </div>
+                          <div class="calendar-legend">
+                            <div><span class="color-box" style="background-color: var(--accent-color);"></span> Lanches e Mat. Expediente</div>
+                            <div><span class="color-box" style="background-color: var(--success-color);"></span> Pedido Unidades Interior</div>
+                          </div>
+                          <a href="https://shiftlis.roseannedore.com.br/" class="btn" target="_blank" rel="noopener noreferrer">SHIFT</a>
+                        </div>
+                    </div>
+                    <div class="notice-card">
+                        <div class="notice-card-content">
+                          <h3><i class="fas fa-info-circle"></i> Atenção às Requisições</h3>
+                          <p class="rotating-message"></p>
+                        </div>
+                    </div>
+                  </div>
+              </section>
+
+              <section id="checklist-section">
+                <h2><i class="fas fa-tasks"></i> Status de Registro por Unidade</h2><div class="checklist"><div id="checklist-container"></div></div>
+              </section>
+              <div id="counters">
+                <p id="checklist-count">Unidades com registro: 0 / 0</p><p id="visitor-count">Total de Visitas: 0</p>
+              </div>
+            </main>
+          </div>
+        </div>
+
+        <!-- PÁGINA DE RELATÓRIO -->
+        <div id="report-page" class="page">
+          <div class="card">
+            <div id="report-content-to-print">
+                <header class="header">
+                  <div class="header-title"><h1><i class="fas fa-robot"></i> Relatório de Análise</h1></div>
+                  <div class="header-actions"><button id="backToMainBtn" title="Voltar"><i class="fas fa-arrow-left"></i></button></div>
+                </header>
+                <main class="body">
+                  <section>
+                    <h2><i class="fas fa-chart-pie"></i> Análise Gráfica</h2>
+                    <div class="report-charts">
+                      <div class="chart-card"><h3>Distribuição de Falhas</h3><canvas id="failuresByUnitChart"></canvas></div>
+                      <div class="chart-card"><h3>Unidades com Registro</h3><canvas id="reportingUnitsChart"></canvas></div>
+                      <div class="chart-card"><h3>Top 5 Unidades</h3><canvas id="topUnitsChart"></canvas></div>
+                    </div>
+                  </section>
+                  <section id="ai-report-section">
+                    <h2><i class="fas fa-magic"></i> Relatório para Fornecedor</h2>
+                    <div id="ai-report-output" style="margin-top:0;">Clique em "Gerar Análise" para criar o relatório...</div>
+                  </section>
+                </main>
+            </div>
+            <div class="body" style="padding-top: 0;">
+                <div class="form-navigation" style="justify-content: space-between;">
+                    <button class="btn" id="generateAiTextBtn"><i class="fas fa-cogs"></i> Gerar Análise</button>
+                    <div>
+                      <button class="btn secondary" id="copyReportBtn" disabled><i class="fas fa-copy"></i> Copiar</button>
+                      <button class="btn" id="generatePdfBtn" disabled style="margin-left: 1rem; background-color: var(--danger-color);"><i class="fas fa-file-pdf"></i> Gerar PDF</button>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
     </div>
+    
+    <aside class="sidebar sidebar-right">
+        <div class="notice-card">
+            <div class="notice-card-content">
+              <h3><i class="fas fa-info-circle"></i> Atenção às Requisições</h3>
+              <p class="rotating-message"></p>
+            </div>
+        </div>
+    </aside>
   </div>
 
   <!-- Modal Genérico -->
@@ -223,8 +382,8 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       // --- CONSTANTES E VARIÁVEIS GLOBAIS ---
-      const VISITOR_KEY = 'site_visitors_v12';
-      const THEME_KEY = 'site_theme_v12';
+      const VISITOR_KEY = 'site_visitors_v14';
+      const THEME_KEY = 'site_theme_v14';
       const unidades = ["ALTIPLANO", "BAIRRO DOS ESTADOS", "BANCARIOS", "BAYEUX", "BESSA", "BESSA II", "CABEDELO", "CRISTO REDENTOR", "CRUZ DAS ARMAS", "EPITÁCIO", "GEISEL", "GUARABIRA", "INTERMARES", "MAMANGUAPE", "MANAÍRA", "MANGABEIRA", "NOVA DIAGNÓSTICO", "PATOS", "SANTA RITA", "SAPÉ", "SAPÉ II", "TAMBÁU", "TORRE", "VALENTINA", "COLETA DOMICILIAR"];
       const TOTAL_UNIDADES = unidades.length;
       let chartInstances = {};
@@ -252,7 +411,8 @@
         checklistCount: document.getElementById('checklist-count'),
         visitorCount: document.getElementById('visitor-count'),
         numericalSummary: document.getElementById('numerical-summary'),
-        registerBtn: document.getElementById('registerBtn')
+        registerBtn: document.getElementById('registerBtn'),
+        rotatingMessages: document.querySelectorAll('.rotating-message')
       };
 
       // --- SERVIÇOS DE DADOS E UI ---
@@ -296,10 +456,7 @@
         updateAll: (feedbacks) => {
           const { totalFalhas, falhasPorUnidade, unidadesComRegistro } = dataService.processData(feedbacks);
           
-          // Atualiza Resumo Numérico
           dom.numericalSummary.innerHTML = `<div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h4>Total de Falhas</h4><p>${totalFalhas}</p></div><div class="stat-card"><i class="fas fa-sitemap"></i><h4>Unidades com Registro</h4><p>${unidadesComRegistro.size}</p></div><div class="stat-card"><h4>Detalhamento</h4><ul id="unit-breakdown-list">${Object.keys(falhasPorUnidade).length > 0 ? Object.entries(falhasPorUnidade).map(([unit, count]) => `<li><strong>${unit}:</strong> ${count}</li>`).join('') : '<li>Nenhum registro.</li>'}</ul></div>`;
-
-          // Atualiza Checklist
           dom.checklistCount.textContent = `Unidades com registro: ${unidadesComRegistro.size} / ${TOTAL_UNIDADES}`;
           document.querySelectorAll('#checklist-container input').forEach(cb => {
             cb.checked = unidadesComRegistro.has(cb.dataset.unit);
@@ -338,6 +495,36 @@
           dom.visitorCount.textContent = `Total de Visitas: ${visitorCount}`;
           
           dataService.listenForUpdates(uiService.updateAll);
+          app.startRotatingMessages();
+        },
+        startRotatingMessages: () => {
+            const messages = [
+                "Materiais precisam ser separado antecipadamente, se organize com o cronograma.",
+                "Cada material tem custo. Cada requisição deve ter propósito.",
+                "Antes de requisitar, pergunte: é essencial ou é excesso?",
+                "Antecipar a necessidade evita o caos da urgência.",
+                "Requisições de última hora comprometem todos os processos.",
+                "Estoque não é infinito. A responsabilidade é coletiva.",
+                "O bom profissional começa pela gestão eficiente dos recursos.",
+                "Sua requisição fala sobre sua responsabilidade com a empresa.",
+                "Mais que pedir, é preciso justificar e planejar."
+            ];
+            let messageIndex = 0;
+            if (dom.rotatingMessages.length > 0) {
+                setInterval(() => {
+                    messageIndex = (messageIndex + 1) % messages.length;
+                    dom.rotatingMessages.forEach(el => {
+                        el.style.opacity = 0;
+                        setTimeout(() => {
+                            el.textContent = `"${messages[messageIndex]}"`;
+                            el.style.opacity = 1;
+                        }, 500);
+                    });
+                }, 5000);
+                dom.rotatingMessages.forEach(el => {
+                    el.textContent = `"${messages[0]}"`;
+                });
+            }
         },
         bindEventListeners: () => {
           dom.aiReportBtn.addEventListener('click', () => {
