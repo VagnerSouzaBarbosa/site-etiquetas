@@ -72,7 +72,14 @@
     @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
 
     .report-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2.5rem; }
-    .chart-card { background-color: var(--card-bg); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border-color); }
+    .chart-card { 
+      background-color: var(--card-bg); 
+      padding: 1.5rem; 
+      border-radius: var(--radius); 
+      border: 1px solid var(--border-color);
+      position: relative; /* CORREÇÃO: Adicionado para dar contexto ao canvas */
+      height: 350px; /* CORREÇÃO: Altura definida para o container do gráfico */
+    }
     .chart-card h3 { text-align: center; margin-bottom: 1.5rem; font-family: 'Poppins', sans-serif; font-size: 1.1rem; }
     #ai-report-section { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: var(--radius); }
     #ai-report-output { margin-top: 1.5rem; padding: 1.5rem; border-radius: 8px; background-color: var(--bg); min-height: 150px; white-space: pre-wrap; line-height: 1.6; }
@@ -303,11 +310,17 @@
           const { falhasPorUnidade, unidadesComRegistro } = dataService.processData(allFeedbacks);
           const top5Unidades = Object.entries(falhasPorUnidade).sort((a, b) => b[1] - a[1]).slice(0, 5);
           const chartColors = ['#3498db', '#e74c3c', '#9b59b6', '#f1c40f', '#2ecc71', '#1abc9c', '#34495e', '#e67e22'];
-          const chartOptions = { responsive: true, maintainAspectRatio: false, animation: { duration: 1000 } };
+          
+          // CORREÇÃO: Opções comuns para os gráficos
+          const commonChartOptions = { 
+            responsive: true, 
+            maintainAspectRatio: false, // <-- CORREÇÃO: Essencial para respeitar a altura do container
+            animation: { duration: 1000 } 
+          };
 
-          chartInstances.failuresByUnit = new Chart(document.getElementById('failuresByUnitChart'), { type: 'pie', data: { labels: Object.keys(falhasPorUnidade), datasets: [{ data: Object.values(falhasPorUnidade), backgroundColor: chartColors }] }, options: { ...chartOptions, plugins: { legend: { position: 'top' } } } });
-          chartInstances.reportingUnits = new Chart(document.getElementById('reportingUnitsChart'), { type: 'pie', data: { labels: ['Com Registro', 'Sem Registro'], datasets: [{ data: [unidadesComRegistro.size, TOTAL_UNIDADES - unidadesComRegistro.size], backgroundColor: ['#2ecc71', '#bdc3c7'] }] }, options: { ...chartOptions, plugins: { legend: { position: 'top' } } } });
-          chartInstances.topUnits = new Chart(document.getElementById('topUnitsChart'), { type: 'bar', data: { labels: top5Unidades.map(item => item[0]), datasets: [{ label: 'Nº de Falhas', data: top5Unidades.map(item => item[1]), backgroundColor: '#3498db' }] }, options: { ...chartOptions, indexAxis: 'y', plugins: { legend: { display: false } } } });
+          chartInstances.failuresByUnit = new Chart(document.getElementById('failuresByUnitChart'), { type: 'pie', data: { labels: Object.keys(falhasPorUnidade), datasets: [{ data: Object.values(falhasPorUnidade), backgroundColor: chartColors }] }, options: { ...commonChartOptions, plugins: { legend: { position: 'top' } } } });
+          chartInstances.reportingUnits = new Chart(document.getElementById('reportingUnitsChart'), { type: 'pie', data: { labels: ['Com Registro', 'Sem Registro'], datasets: [{ data: [unidadesComRegistro.size, TOTAL_UNIDADES - unidadesComRegistro.size], backgroundColor: ['#2ecc71', '#bdc3c7'] }] }, options: { ...commonChartOptions, plugins: { legend: { position: 'top' } } } });
+          chartInstances.topUnits = new Chart(document.getElementById('topUnitsChart'), { type: 'bar', data: { labels: top5Unidades.map(item => item[0]), datasets: [{ label: 'Nº de Falhas', data: top5Unidades.map(item => item[1]), backgroundColor: '#3498db' }] }, options: { ...commonChartOptions, indexAxis: 'y', plugins: { legend: { display: false } } } });
         }
       };
 
