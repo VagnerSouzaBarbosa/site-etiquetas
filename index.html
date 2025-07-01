@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Registro de Falhas de Etiquetas</title>
-  <link rel="icon" type="image/x-icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdRZj6UwfwUFfvlmCfFUDzQMDJz7YZioF_de0F8SLA5yHB8dxPEFCCUgEDGW4ERl8-fI&usqp=CAU">
+  <!-- Favicons Adicionados -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,8 +81,8 @@
       padding: 1.5rem; 
       border-radius: var(--radius); 
       border: 1px solid var(--border-color);
-      position: relative; /* CORREÇÃO: Adicionado para dar contexto ao canvas */
-      height: 350px; /* CORREÇÃO: Altura definida para o container do gráfico */
+      position: relative;
+      height: 350px; 
     }
     .chart-card h3 { text-align: center; margin-bottom: 1.5rem; font-family: 'Poppins', sans-serif; font-size: 1.1rem; }
     #ai-report-section { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: var(--radius); }
@@ -202,7 +206,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-    // Sua configuração do Firebase que você forneceu
+    // Sua configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyANadM-WbuGFKp5dz_09rjtsLUX-DTu908",
       authDomain: "etiquetas-falhas.firebaseapp.com",
@@ -219,12 +223,12 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       // --- CONSTANTES E VARIÁVEIS GLOBAIS ---
-      const VISITOR_KEY = 'site_visitors_v11';
-      const THEME_KEY = 'site_theme_v11';
+      const VISITOR_KEY = 'site_visitors_v12';
+      const THEME_KEY = 'site_theme_v12';
       const unidades = ["ALTIPLANO", "BAIRRO DOS ESTADOS", "BANCARIOS", "BAYEUX", "BESSA", "BESSA II", "CABEDELO", "CRISTO REDENTOR", "CRUZ DAS ARMAS", "EPITÁCIO", "GEISEL", "GUARABIRA", "INTERMARES", "MAMANGUAPE", "MANAÍRA", "MANGABEIRA", "NOVA DIAGNÓSTICO", "PATOS", "SANTA RITA", "SAPÉ", "SAPÉ II", "TAMBÁU", "TORRE", "VALENTINA", "COLETA DOMICILIAR"];
       const TOTAL_UNIDADES = unidades.length;
       let chartInstances = {};
-      let allFeedbacks = []; // Cache local dos dados para evitar múltiplas leituras
+      let allFeedbacks = []; // Cache local dos dados
 
       // --- SELETORES DE DOM ---
       const dom = {
@@ -251,23 +255,18 @@
         registerBtn: document.getElementById('registerBtn')
       };
 
-      // --- LÓGICA DE DADOS OTIMIZADA COM FIREBASE ---
+      // --- SERVIÇOS DE DADOS E UI ---
       const dataService = {
         listenForUpdates: (callback) => {
-          const feedbacksCol = collection(db, 'falhas');
-          onSnapshot(feedbacksCol, (snapshot) => {
+          onSnapshot(collection(db, 'falhas'), (snapshot) => {
             allFeedbacks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             callback(allFeedbacks);
+          }, (error) => {
+            console.error("Erro ao ouvir o banco de dados:", error);
+            uiService.showModal('Erro de Conexão', 'Não foi possível carregar os dados. Verifique a sua conexão com a internet.');
           });
         },
-        addFeedback: async (feedbackData) => {
-          try {
-            await addDoc(collection(db, 'falhas'), feedbackData);
-          } catch (e) {
-            console.error("Erro ao adicionar documento: ", e);
-            uiService.showModal('Erro', 'Não foi possível registrar a falha. Verifique sua conexão e tente novamente.');
-          }
-        },
+        addFeedback: (data) => addDoc(collection(db, 'falhas'), data),
         processData: (feedbacks) => {
           const totalFalhas = feedbacks.reduce((sum, f) => sum + parseInt(f.quantidade || 0), 0);
           const falhasPorUnidade = feedbacks.reduce((acc, f) => {
@@ -279,7 +278,6 @@
         }
       };
 
-      // --- LÓGICA DE UI ---
       const uiService = {
         showPage: (pageId) => {
           document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -295,11 +293,13 @@
           dom.themeToggleBtn.innerHTML = theme === 'dark-mode' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
           localStorage.setItem(THEME_KEY, theme);
         },
-        updateMainPage: (feedbacks) => {
+        updateAll: (feedbacks) => {
           const { totalFalhas, falhasPorUnidade, unidadesComRegistro } = dataService.processData(feedbacks);
           
+          // Atualiza Resumo Numérico
           dom.numericalSummary.innerHTML = `<div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h4>Total de Falhas</h4><p>${totalFalhas}</p></div><div class="stat-card"><i class="fas fa-sitemap"></i><h4>Unidades com Registro</h4><p>${unidadesComRegistro.size}</p></div><div class="stat-card"><h4>Detalhamento</h4><ul id="unit-breakdown-list">${Object.keys(falhasPorUnidade).length > 0 ? Object.entries(falhasPorUnidade).map(([unit, count]) => `<li><strong>${unit}:</strong> ${count}</li>`).join('') : '<li>Nenhum registro.</li>'}</ul></div>`;
 
+          // Atualiza Checklist
           dom.checklistCount.textContent = `Unidades com registro: ${unidadesComRegistro.size} / ${TOTAL_UNIDADES}`;
           document.querySelectorAll('#checklist-container input').forEach(cb => {
             cb.checked = unidadesComRegistro.has(cb.dataset.unit);
@@ -310,17 +310,11 @@
           const { falhasPorUnidade, unidadesComRegistro } = dataService.processData(allFeedbacks);
           const top5Unidades = Object.entries(falhasPorUnidade).sort((a, b) => b[1] - a[1]).slice(0, 5);
           const chartColors = ['#3498db', '#e74c3c', '#9b59b6', '#f1c40f', '#2ecc71', '#1abc9c', '#34495e', '#e67e22'];
-          
-          // CORREÇÃO: Opções comuns para os gráficos
-          const commonChartOptions = { 
-            responsive: true, 
-            maintainAspectRatio: false, // <-- CORREÇÃO: Essencial para respeitar a altura do container
-            animation: { duration: 1000 } 
-          };
+          const chartOptions = { responsive: true, maintainAspectRatio: false, animation: { animateScale: true, animateRotate: true } };
 
-          chartInstances.failuresByUnit = new Chart(document.getElementById('failuresByUnitChart'), { type: 'pie', data: { labels: Object.keys(falhasPorUnidade), datasets: [{ data: Object.values(falhasPorUnidade), backgroundColor: chartColors }] }, options: { ...commonChartOptions, plugins: { legend: { position: 'top' } } } });
-          chartInstances.reportingUnits = new Chart(document.getElementById('reportingUnitsChart'), { type: 'pie', data: { labels: ['Com Registro', 'Sem Registro'], datasets: [{ data: [unidadesComRegistro.size, TOTAL_UNIDADES - unidadesComRegistro.size], backgroundColor: ['#2ecc71', '#bdc3c7'] }] }, options: { ...commonChartOptions, plugins: { legend: { position: 'top' } } } });
-          chartInstances.topUnits = new Chart(document.getElementById('topUnitsChart'), { type: 'bar', data: { labels: top5Unidades.map(item => item[0]), datasets: [{ label: 'Nº de Falhas', data: top5Unidades.map(item => item[1]), backgroundColor: '#3498db' }] }, options: { ...commonChartOptions, indexAxis: 'y', plugins: { legend: { display: false } } } });
+          chartInstances.failuresByUnit = new Chart(document.getElementById('failuresByUnitChart'), { type: 'pie', data: { labels: Object.keys(falhasPorUnidade), datasets: [{ data: Object.values(falhasPorUnidade), backgroundColor: chartColors }] }, options: { ...chartOptions, plugins: { legend: { position: 'top' } } } });
+          chartInstances.reportingUnits = new Chart(document.getElementById('reportingUnitsChart'), { type: 'pie', data: { labels: ['Com Registro', 'Sem Registro'], datasets: [{ data: [unidadesComRegistro.size, TOTAL_UNIDADES - unidadesComRegistro.size], backgroundColor: ['#2ecc71', '#bdc3c7'] }] }, options: { ...chartOptions, plugins: { legend: { position: 'top' } } } });
+          chartInstances.topUnits = new Chart(document.getElementById('topUnitsChart'), { type: 'bar', data: { labels: top5Unidades.map(item => item[0]), datasets: [{ label: 'Nº de Falhas', data: top5Unidades.map(item => item[1]), backgroundColor: '#3498db' }] }, options: { ...chartOptions, indexAxis: 'y', plugins: { legend: { display: false } } } });
         }
       };
 
@@ -343,7 +337,7 @@
           }
           dom.visitorCount.textContent = `Total de Visitas: ${visitorCount}`;
           
-          dataService.listenForUpdates(uiService.updateMainPage);
+          dataService.listenForUpdates(uiService.updateAll);
         },
         bindEventListeners: () => {
           dom.aiReportBtn.addEventListener('click', () => {
@@ -381,11 +375,9 @@
           
           await dataService.addFeedback(data);
           
-          setTimeout(() => { 
-            uiService.showModal('<i class="fas fa-check-circle"></i> Sucesso!', '<p>Registro de falha enviado com sucesso.</p>'); 
-            dom.form.reset(); 
-            dom.registerBtn.disabled = false; dom.registerBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Falha'; 
-          }, 500);
+          uiService.showModal('<i class="fas fa-check-circle"></i> Sucesso!', '<p>Registro de falha enviado com sucesso.</p>'); 
+          dom.form.reset(); 
+          dom.registerBtn.disabled = false; dom.registerBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Falha'; 
         },
         handleViewRecords: () => {
           let tableHtml = '<p>Nenhum registro encontrado.</p>';
