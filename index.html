@@ -1,259 +1,392 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="light-mode">
 <head>
   <meta charset="UTF-8">
-  <title>Falhas de Etiquetas – Lote X</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <title>Registro de Falhas de Etiquetas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.emailjs.com/sdk/3.2.0/email.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
-      --bg: #001f3f;
-      --card-bg: #fff;
-      --accent: #00aaff;
-      --text-light: #fff;
-      --text-dark: #003366;
-      --radius: 8px;
-      --transition: .3s ease;
+      --bg-light: #f4f7fa; --card-bg-light: #ffffff; --text-light: #2c3e50; --text-muted-light: #7f8c8d; --border-light: #e0e6ed;
+      --accent-color: #3498db; --accent-dark: #2980b9; --success-color: #2ecc71; --danger-color: #e74c3c;
+      --bg-dark: #2c3e50; --card-bg-dark: #34495e; --text-dark: #ecf0f1; --text-muted-dark: #bdc3c7; --border-dark: #4a627a;
+      --radius: 12px; --shadow: 0 10px 30px rgba(0, 0, 0, 0.07); --transition: all 0.3s ease-in-out;
     }
-    * { box-sizing: border-box; margin:0; padding:0 }
+    html.light-mode { --bg: var(--bg-light); --card-bg: var(--card-bg-light); --text-primary: var(--text-light); --text-muted: var(--text-muted-light); --border-color: var(--border-light); }
+    html.dark-mode { --bg: var(--bg-dark); --card-bg: var(--card-bg-dark); --text-primary: var(--text-dark); --text-muted: var(--text-muted-dark); --border-color: var(--border-dark); }
+    * { box-sizing: border-box; margin:0; padding:0; }
     body {
-      background: var(--bg);
-      font-family: 'Orbitron',sans-serif;
-      color: var(--text-dark);
-      display: flex;
-      justify-content: center;
-      padding: 1rem;
+      background-color: var(--bg); color: var(--text-primary); font-family: 'Inter', sans-serif;
+      display: flex; justify-content: center; align-items: flex-start; padding: 2rem 1rem; min-height: 100vh; transition: var(--transition);
     }
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      width: 100%; max-width: 800px;
-      box-shadow: 0 4px 20px rgba(0,0,0,.2);
-      overflow: hidden;
-      animation: fadeIn .8s ease-out;
-    }
-    @keyframes fadeIn {
-      from { opacity:0; transform:translateY(20px) }
-      to   { opacity:1; transform:translateY(0) }
-    }
+    .container { width: 100%; max-width: 850px; }
+    .card { background-color: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); transition: var(--transition); overflow: hidden; }
     .header {
-      background: var(--accent);
-      color: var(--text-light);
-      display: flex; align-items: center; gap:1rem;
-      padding: 1rem;
+      background: var(--accent-color); color: white; display: flex; align-items: center; justify-content: space-between; padding: 1.5rem;
     }
-    .header img { width:80px; }
-    .header h1 { font-size:1.6rem }
-    .body { padding:1.5rem }
-    form label {
-      display:block; margin-top:1rem;
-      font-weight:700; font-size:.95rem;
-      text-align:left;
+    .header-title { display: flex; align-items: center; gap: 1rem; }
+    .header img { width: 150px; height: auto; border-radius: 8px; background: white; padding: 5px; }
+    .header-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-end; }
+    .header-actions button {
+      background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%;
+      font-size: 1.2rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center;
     }
-    form input, form select, form textarea {
-      width:100%; padding:.7rem; margin-top:.3rem;
-      border:1px solid #ccc; border-radius:var(--radius);
-      font-size:.95rem;
-      transition: border var(--transition), box-shadow var(--transition);
+    .header-actions button:hover { background: rgba(255,255,255,0.4); transform: translateY(-2px); }
+    .body { padding: 2rem; }
+    section { margin-bottom: 2.5rem; }
+    h2 {
+      font-family: 'Poppins', sans-serif; font-size: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--accent-color);
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; color: var(--accent-color);
     }
-    form input:focus, form select:focus, form textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 8px rgba(0,170,255,.4);
-      outline: none;
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .form-group i { color: var(--text-muted); }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; padding: 0.9rem; margin-top: 0.2rem; border: 1px solid var(--border-color); border-radius: 8px;
+      font-size: 1rem; background-color: var(--bg); color: var(--text-primary); transition: var(--transition);
     }
-    .actions { margin-top:1.5rem; text-align:center }
-    .actions button {
-      background:var(--accent);
-      color:var(--text-light);
-      border:none;
-      padding:.75rem 2rem;
-      font-size:1rem;
-      border-radius:var(--radius);
-      cursor:pointer;
-      transition: background var(--transition);
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2); outline: none; }
+    .actions { margin-top: 2rem; text-align: center; }
+    .btn {
+      background:var(--accent-color); color: white; border:none; padding: 0.9rem 2rem; font-size: 1.1rem; font-weight: 700;
+      border-radius: 8px; cursor:pointer; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.5rem;
     }
-    .actions button:hover { background:#33ccff }
-    .charts {
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:2rem;
-      margin-top:2rem;
-    }
-    canvas {
-      background:#fafafa;
-      border-radius:var(--radius);
-    }
-    .checklist {
-      margin-top:2rem;
-      background:#f9f9f9;
-      padding:1rem;
-      border-radius:var(--radius);
-    }
-    .checklist h3 { text-align:center; margin-bottom:.5rem }
-    #checklist-container {
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:.5rem 1rem;
-      max-height:250px;
-      overflow-y:auto;
-      padding:.5rem;
-      background:#fff;
-      border:1px solid #ddd;
-      border-radius:var(--radius);
-    }
-    #checklist-container label {
-      display:flex; align-items:center; gap:.5rem;
-      font-size:.9rem;
-    }
-    #counters {
-      margin-top:2rem;
-      text-align:center;
-      font-size:1rem;
-      font-weight:700;
-    }
+    .btn:hover { background:var(--accent-dark); transform: translateY(-2px); }
+    .btn:disabled { background: #999; cursor: not-allowed; transform: none; }
+    
+    .page { display: none; }
+    .page.active { display: block; animation: fadeInPage 0.5s ease-out; }
+    @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
+
+    .report-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2.5rem; }
+    .chart-card { background-color: var(--card-bg); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border-color); }
+    .chart-card h3 { text-align: center; margin-bottom: 1.5rem; font-family: 'Poppins', sans-serif; font-size: 1.1rem; }
+    #ai-report-section { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: var(--radius); }
+    #ai-report-output { margin-top: 1.5rem; padding: 1.5rem; border-radius: 8px; background-color: var(--bg); min-height: 150px; white-space: pre-wrap; line-height: 1.6; }
+    .loader { width: 20px; height: 20px; border: 3px solid var(--text-muted); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .numerical-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+    .stat-card { background-color: var(--card-bg); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border-color); text-align: center; transition: var(--transition); }
+    .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+    .stat-card i { font-size: 2.5rem; color: var(--accent-color); margin-bottom: 1rem; }
+    .stat-card h4 { font-family: 'Poppins', sans-serif; font-size: 1rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .stat-card p { font-size: 2.5rem; font-weight: 700; }
+    #unit-breakdown-list { list-style-type: none; padding: 0; max-height: 180px; overflow-y: auto; text-align: left; margin-top: 1rem; }
+    .checklist { background-color: var(--card-bg); border: 1px solid var(--border-color); padding:1.5rem; border-radius:var(--radius); }
+    #checklist-container { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:.75rem 1.5rem; max-height:250px; overflow-y:auto; padding-top: 1rem; }
+    #checklist-container label { display:flex; align-items:center; gap:.5rem; font-size:.9rem; opacity: 0.8; }
+    #checklist-container input[type="checkbox"] { pointer-events: none; }
+    #counters { margin-top:2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); text-align:center; font-size:1rem; font-weight:700; display: flex; justify-content: space-around; gap: 1rem; color: var(--text-muted); }
+    
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; animation: fadeInModal 0.3s; }
+    .modal-content { background-color: var(--card-bg); margin: auto; padding: 2rem; width: 90%; max-width: 600px; border-radius: var(--radius); box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideInModal 0.4s ease-out; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+    .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; color: var(--accent-color); }
+    .modal-header .close-btn { font-size: 1.8rem; cursor: pointer; color: var(--text-muted); background: none; border: none; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdRZj6UwfwUFfvlmCfFUDzQMDJz7YZioF_de0F8SLA5yHB8dxPEFCCUgEDGW4ERl8-fI&usqp=CAU"
-           alt="Logo Roseanne Dore">
-      <h1>Falhas de Etiquetas – Lote X</h1>
+  <div class="container">
+    <!-- PÁGINA PRINCIPAL -->
+    <div id="main-page" class="page active">
+      <div class="card">
+        <header class="header">
+          <div class="header-title">
+            <img src="image.png" alt="Logo Roseanne Dore Laboratórios">
+          </div>
+          <div class="header-actions">
+            <button id="aiReportBtn" title="Relatório IA"><i class="fas fa-robot"></i></button>
+            <button id="themeToggleBtn" title="Alternar Modo"><i class="fas fa-moon"></i></button>
+            <button id="infoBtn" title="Sobre esta página"><i class="fas fa-info-circle"></i></button>
+            <button id="viewRecordsBtn" title="Ver Registros"><i class="fas fa-list-alt"></i></button>
+          </div>
+        </header>
+        <main class="body">
+          <section id="form-section">
+            <h2><i class="fas fa-pencil-alt"></i> Novo Registro de Falha</h2>
+            <form id="feedForm" novalidate>
+              <div class="form-group"><label for="data"><i class="fas fa-calendar-alt"></i> Data da Ocorrência</label><input type="date" id="data" name="data" required></div>
+              <div class="form-group"><label for="unidade"><i class="fas fa-building"></i> Unidade</label><select id="unidade" name="unidade" required><option value="" disabled selected>Selecione a unidade</option></select></div>
+              <div class="form-group"><label for="responsavel"><i class="fas fa-user"></i> Responsável pelo Registro</label><input type="text" id="responsavel" name="responsavel" required placeholder="Seu nome completo"></div>
+              <div class="form-group"><label for="quantidade"><i class="fas fa-sort-numeric-up"></i> Quantidade de Falhas</label><input type="number" id="quantidade" name="quantidade" min="1" required></div>
+              <div class="form-group"><label for="comentario"><i class="fas fa-comment-dots"></i> O que está acontecendo com as etiquetas?</label><textarea id="comentario" name="comentario" rows="4" required placeholder="Ex.: A etiqueta está descolando do tubo na lateral esquerda, a impressão está falhando..."></textarea></div>
+              <div class="form-group"><label for="foto"><i class="fas fa-camera"></i> Foto da Falha (Opcional)</label><input type="file" id="foto" name="foto" accept="image/*"></div>
+              
+              <div class="actions">
+                <button type="submit" class="btn" id="registerBtn"><i class="fas fa-paper-plane"></i> Registrar Falha</button>
+              </div>
+            </form>
+          </section>
+          <section id="data-section">
+            <h2><i class="fas fa-chart-pie"></i> Resumo Geral</h2><div id="numerical-summary" class="numerical-summary"></div>
+          </section>
+          <section id="checklist-section">
+            <h2><i class="fas fa-tasks"></i> Status de Registro por Unidade</h2><div class="checklist"><div id="checklist-container"></div></div>
+          </section>
+          <div id="counters">
+            <p id="checklist-count">Unidades com registro: 0 / 0</p><p id="visitor-count">Total de Visitas: 0</p>
+          </div>
+        </main>
+      </div>
     </div>
-    <div class="body">
-      <!-- formulário -->
-      <form id="feedForm">
-        <label for="data">📅 Data da Ocorrência</label>
-        <input type="date" id="data" name="data" required>
 
-        <label for="unidade">🏢 Unidade</label>
-        <select id="unidade" name="unidade" required>
-          <option value="" disabled selected>Selecione a unidade</option>
-          <option>ALTIPLANO</option><option>BAIRRO DOS ESTADOS</option>
-          <option>BANCARIOS</option><option>BAYEUX</option>
-          <option>BESSA</option><option>BESSA II</option>
-          <option>CABEDELO</option><option>CRISTO REDENTOR</option>
-          <option>CRUZ DAS ARMAS</option><option>EPITÁCIO</option>
-          <option>GEISEL</option><option>GUARABIRA</option>
-          <option>INTERMARES</option><option>MAMANGUAPE</option>
-          <option>MANAÍRA</option><option>MANGABEIRA</option>
-          <option>NOVA DIAGNÓSTICO</option><option>PATOS</option>
-          <option>SANTA RITA</option><option>SAPÉ</option>
-          <option>SAPÉ II</option><option>TAMBÁU</option>
-          <option>TORRE</option><option>VALENTINA</option>
-          <option>COLETADOMICILIAR</option>
-        </select>
-
-        <label for="quantidade">🔢 Quantidade de Falhas</label>
-        <input type="number" id="quantidade" name="quantidade" min="1" required>
-
-        <label for="comentario">✏️ Descrição / Comentário</label>
-        <textarea id="comentario" name="comentario" rows="3" required
-                  placeholder="Ex.: Descolou na lateral esquerda do tubo"></textarea>
-
-        <label for="responsavel">🖋️ Responsável pelo Registro</label>
-        <input type="text" id="responsavel" name="responsavel" required placeholder="Nome completo">
-
-        <label for="foto">📷 Foto da Falha</label>
-        <input type="file" id="foto" name="foto" accept="image/*" required>
-
-        <div class="actions">
-          <button type="submit">Enviar Feedback</button>
-        </div>
-      </form>
-
-      <!-- gráficos -->
-      <div class="charts">
-        <div>
-          <h3 style="text-align:center">Respostas por Unidade</h3>
-          <canvas id="reportChart" height="200"></canvas>
-        </div>
-        <div>
-          <h3 style="text-align:center">Total de Visitantes</h3>
-          <canvas id="visitorChart" height="200"></canvas>
-        </div>
-      </div>
-
-      <!-- checklist -->
-      <div class="checklist">
-        <h3>Checklist de Unidades Respondidas</h3>
-        <div id="checklist-container">
-          <label><input type="checkbox" data-unit="ALTIPLANO"> ALTIPLANO</label>
-          <label><input type="checkbox" data-unit="BAIRRO DOS ESTADOS"> BAIRRO DOS ESTADOS</label>
-          <label><input type="checkbox" data-unit="BANCARIOS"> BANCARIOS</label>
-          <label><input type="checkbox" data-unit="BAYEUX"> BAYEUX</label>
-          <label><input type="checkbox" data-unit="BESSA"> BESSA</label>
-          <label><input type="checkbox" data-unit="BESSA II"> BESSA II</label>
-          <label><input type="checkbox" data-unit="CABEDELO"> CABEDELO</label>
-          <label><input type="checkbox" data-unit="CRISTO REDENTOR"> CRISTO REDENTOR</label>
-          <label><input type="checkbox" data-unit="CRUZ DAS ARMAS"> CRUZ DAS ARMAS</label>
-          <label><input type="checkbox" data-unit="EPITÁCIO"> EPITÁCIO</label>
-          <label><input type="checkbox" data-unit="GEISEL"> GEISEL</label>
-          <label><input type="checkbox" data-unit="GUARABIRA"> GUARABIRA</label>
-          <label><input type="checkbox" data-unit="INTERMARES"> INTERMARES</label>
-          <label><input type="checkbox" data-unit="MAMANGUAPE"> MAMANGUAPE</label>
-          <label><input type="checkbox" data-unit="MANAÍRA"> MANAÍRA</label>
-          <label><input type="checkbox" data-unit="MANGABEIRA"> MANGABEIRA</label>
-          <label><input type="checkbox" data-unit="NOVA DIAGNÓSTICO"> NOVA DIAGNÓSTICO</label>
-          <label><input type="checkbox" data-unit="PATOS"> PATOS</label>
-          <label><input type="checkbox" data-unit="SANTA RITA"> SANTA RITA</label>
-          <label><input type="checkbox" data-unit="SAPÉ"> SAPÉ</label>
-          <label><input type="checkbox" data-unit="SAPÉ II"> SAPÉ II</label>
-          <label><input type="checkbox" data-unit="TAMBÁU"> TAMBÁU</label>
-          <label><input type="checkbox" data-unit="TORRE"> TORRE</label>
-          <label><input type="checkbox" data-unit="VALENTINA"> VALENTINA</label>
-          <label><input type="checkbox" data-unit="COLETADOMICILIAR"> COLETADOMICILIAR</label>
-        </div>
-      </div>
-
-      <!-- counters no final -->
-      <div id="counters">
-        <p id="visitor-count">Visitantes: 0</p>
-        <p id="checklist-count">Unidades marcadas: 0 / 25</p>
+    <!-- PÁGINA DE RELATÓRIO -->
+    <div id="report-page" class="page">
+      <div class="card" id="report-content-to-print">
+        <header class="header">
+          <div class="header-title"><h1><i class="fas fa-robot"></i> Relatório de Análise</h1></div>
+          <div class="header-actions"><button id="backToMainBtn" title="Voltar"><i class="fas fa-arrow-left"></i></button></div>
+        </header>
+        <main class="body">
+          <section>
+            <h2><i class="fas fa-chart-pie"></i> Análise Gráfica</h2>
+            <div class="report-charts">
+              <div class="chart-card"><h3>Distribuição de Falhas por Unidade</h3><canvas id="failuresByUnitChart"></canvas></div>
+              <div class="chart-card"><h3>Unidades com/sem Registro</h3><canvas id="reportingUnitsChart"></canvas></div>
+              <div class="chart-card"><h3>Top 5 Unidades com Mais Falhas</h3><canvas id="topUnitsChart"></canvas></div>
+            </div>
+          </section>
+          <section id="ai-report-section">
+            <h2><i class="fas fa-magic"></i> Relatório para Fornecedor (Gerado por IA)</h2>
+            <button class="btn" id="generateAiTextBtn"><i class="fas fa-cogs"></i> Gerar Análise com IA</button>
+            <div id="ai-report-output">Clique no botão acima para gerar o relatório...</div>
+            <div class="form-navigation" style="margin-top: 1rem; justify-content: flex-end;">
+              <button class="btn secondary" id="copyReportBtn" disabled><i class="fas fa-copy"></i> Copiar</button>
+              <button class="btn" id="emailReportBtn" disabled style="margin-left: 1rem;"><i class="fas fa-envelope"></i> Enviar</button>
+              <button class="btn" id="generatePdfBtn" disabled style="margin-left: 1rem; background-color: var(--danger-color);"><i class="fas fa-file-pdf"></i> Gerar PDF</button>
+            </div>
+          </section>
+        </main>
       </div>
     </div>
   </div>
 
-  <script>
-    emailjs.init('YOUR_USER_ID');
-    const STORAGE_KEY = 'etiquetas_feedbacks';
-    const VISITOR_KEY = 'site_visitors';
-    const CHECK_KEY   = 'unit_checklist';
+  <!-- Modal Genérico -->
+  <div id="mainModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header"><h3 id="modalTitle"></h3><button class="close-btn">&times;</button></div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer"><button class="btn close-btn">Fechar</button></div>
+    </div>
+  </div>
 
-    // incrementa visita
-    function incrementVisitor() {
-      const c = parseInt(localStorage.getItem(VISITOR_KEY)||'0',10) + 1;
-      localStorage.setItem(VISITOR_KEY, c);
-      return c;
-    }
-    // atualiza gráficos
-    function drawCharts() {
-      // visitantes
-      const visitors = parseInt(localStorage.getItem(VISITOR_KEY)||'0',10);
-      document.getElementById('visitor-count').textContent = `Visitantes: ${visitors}`;
-      new Chart(document.getElementById('visitorChart'), {
-        type: 'bar',
-        data: { labels:['Visitantes'], datasets:[{ label:'Total', data:[visitors], backgroundColor:'rgba(255,170,0,0.6)' }]},
-        options:{ scales:{ y:{ beginAtZero:true } } }
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- CONSTANTES E VARIÁVEIS ---
+      const STORAGE_KEY = 'etiquetas_feedbacks_v9';
+      const VISITOR_KEY = 'site_visitors_v9';
+      const CHECK_KEY = 'unit_checklist_v9';
+      const THEME_KEY = 'site_theme_v9';
+      const unidades = ["ALTIPLANO", "BAIRRO DOS ESTADOS", "BANCARIOS", "BAYEUX", "BESSA", "BESSA II", "CABEDELO", "CRISTO REDENTOR", "CRUZ DAS ARMAS", "EPITÁCIO", "GEISEL", "GUARABIRA", "INTERMARES", "MAMANGUAPE", "MANAÍRA", "MANGABEIRA", "NOVA DIAGNÓSTICO", "PATOS", "SANTA RITA", "SAPÉ", "SAPÉ II", "TAMBÁU", "TORRE", "VALENTINA", "COLETA DOMICILIAR"];
+      const TOTAL_UNIDADES = unidades.length;
+      let chartInstances = {};
+
+      // --- ELEMENTOS DO DOM ---
+      const mainPage = document.getElementById('main-page');
+      const reportPage = document.getElementById('report-page');
+      const aiReportBtn = document.getElementById('aiReportBtn');
+      const backToMainBtn = document.getElementById('backToMainBtn');
+      const form = document.getElementById('feedForm');
+      const unidadeSelect = document.getElementById('unidade');
+      const checklistContainer = document.getElementById('checklist-container');
+      const mainModal = document.getElementById('mainModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalBody = document.getElementById('modalBody');
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      const infoBtn = document.getElementById('infoBtn');
+      const viewRecordsBtn = document.getElementById('viewRecordsBtn');
+      
+      // --- NAVEGAÇÃO ENTRE PÁGINAS ---
+      function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+      }
+
+      aiReportBtn.addEventListener('click', () => {
+        showPage('report-page');
+        drawReportCharts();
       });
-      // respostas por unidade
-      const all = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
-      const counts = all.reduce((m,r)=>{ m[r.unidade]=(m[r.unidade]||0)+1; return m; },{});
-      new Chart(document.getElementById('reportChart'), {
-        type:'bar',
-        data:{ labels:Object.keys(counts), datasets:[{ label:'Respostas', data:Object.values(counts), backgroundColor:'rgba(0,170,255,0.6)' }]},
-        options:{ scales:{ y:{ beginAtZero:true } } }
+      backToMainBtn.addEventListener('click', () => {
+        showPage('main-page');
+        Object.values(chartInstances).forEach(chart => chart.destroy());
       });
-    }
-    // atualiza checklist visual e contador
-    function updateChecklist() {
-      const states = JSON.parse(localStorage.getItem(CHECK_KEY)||'{}');
-      let checked = 0;
-      document.querySelectorAll('#checklist-container input').forEach(cb=>{
-        const unit = cb.dataset.unit;
-        cb.checked = !!states[unit];
-        if(cb.checked) checked++;
+
+      // --- LÓGICA DA PÁGINA DE RELATÓRIO ---
+      const generateAiTextBtn = document.getElementById('generateAiTextBtn');
+      const aiReportOutput = document.getElementById('ai-report-output');
+      const copyReportBtn = document.getElementById('copyReportBtn');
+      const emailReportBtn = document.getElementById('emailReportBtn');
+      const generatePdfBtn = document.getElementById('generatePdfBtn');
+
+      function drawReportCharts() {
+        Object.values(chartInstances).forEach(chart => chart.destroy());
+        const allFeedbacks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const falhasPorUnidade = allFeedbacks.reduce((acc, f) => { if (f.unidade) acc[f.unidade] = (acc[f.unidade] || 0) + parseInt(f.quantidade || 0); return acc; }, {});
+        const unidadesComRegistro = new Set(allFeedbacks.map(f => f.unidade));
+        const top5Unidades = Object.entries(falhasPorUnidade).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        
+        const chartColors = ['#3498db', '#e74c3c', '#9b59b6', '#f1c40f', '#2ecc71', '#1abc9c', '#34495e', '#e67e22'];
+
+        chartInstances.failuresByUnit = new Chart(document.getElementById('failuresByUnitChart'), { type: 'pie', data: { labels: Object.keys(falhasPorUnidade), datasets: [{ data: Object.values(falhasPorUnidade), backgroundColor: chartColors }] }, options: { responsive: true, plugins: { legend: { position: 'top' } } } });
+        chartInstances.reportingUnits = new Chart(document.getElementById('reportingUnitsChart'), { type: 'pie', data: { labels: ['Com Registro', 'Sem Registro'], datasets: [{ data: [unidadesComRegistro.size, TOTAL_UNIDADES - unidadesComRegistro.size], backgroundColor: ['#2ecc71', '#bdc3c7'] }] }, options: { responsive: true, plugins: { legend: { position: 'top' } } } });
+        chartInstances.topUnits = new Chart(document.getElementById('topUnitsChart'), { type: 'bar', data: { labels: top5Unidades.map(item => item[0]), datasets: [{ label: 'Nº de Falhas', data: top5Unidades.map(item => item[1]), backgroundColor: '#3498db' }] }, options: { responsive: true, indexAxis: 'y', plugins: { legend: { display: false } } } });
+      }
+
+      generateAiTextBtn.addEventListener('click', async () => {
+        generateAiTextBtn.disabled = true;
+        generateAiTextBtn.innerHTML = '<div class="loader"></div> Gerando...';
+        aiReportOutput.textContent = "Analisando dados e compilando o relatório...";
+        const allFeedbacks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        if (allFeedbacks.length === 0) {
+            aiReportOutput.textContent = "Não há dados para gerar um relatório.";
+            generateAiTextBtn.disabled = false;
+            generateAiTextBtn.innerHTML = '<i class="fas fa-cogs"></i> Gerar Análise';
+            return;
+        }
+        const dataSummary = allFeedbacks.map(f => `Unidade: ${f.unidade}, Qtde: ${f.quantidade}, Desc: ${f.comentario}`).join('; ');
+        const prompt = `Aja como um analista de qualidade. Baseado nos dados de falhas de etiquetas a seguir, escreva um relatório formal e conciso para o fornecedor. O relatório deve: 1. Começar com uma saudação formal. 2. Apresentar um resumo do problema, incluindo total de falhas e de unidades afetadas. 3. Listar as unidades mais críticas. 4. Mencionar os tipos de problemas comuns. 5. Concluir solicitando uma análise e plano de ação. Assine como "Equipe de Suprimentos". Dados: ${dataSummary}`;
+        
+        try {
+            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+            const apiKey = ""; // Provided by environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                console.error('HTTP Error:', response.status, errorBody);
+                throw new Error(`Ocorreu um erro na comunicação com o serviço de IA (Código: ${response.status}).`);
+            }
+
+            const result = await response.json();
+            const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (text) {
+                aiReportOutput.textContent = text;
+                copyReportBtn.disabled = false; 
+                emailReportBtn.disabled = false; 
+                generatePdfBtn.disabled = false;
+            } else {
+                console.error("Estrutura da resposta da IA inesperada ou texto ausente.", result);
+                throw new Error("Não foi possível extrair o relatório da resposta do serviço.");
+            }
+        } catch (error) {
+            console.error("Erro detalhado ao gerar relatório com IA:", error);
+            aiReportOutput.textContent = `Ocorreu um erro ao gerar o relatório. Por favor, tente novamente.\n\nDetalhe do erro: ${error.message}`;
+        } finally {
+            generateAiTextBtn.disabled = false;
+            generateAiTextBtn.innerHTML = '<i class="fas fa-cogs"></i> Gerar Novamente';
+        }
       });
-      document.getElementById('checklist-count').textContent = `Unidades marcadas: ${checked} / 25
+
+      copyReportBtn.addEventListener('click', () => navigator.clipboard.writeText(aiReportOutput.textContent).then(() => showModal('Copiado!', '<p>Relatório copiado para a área de transferência.</p>')));
+      emailReportBtn.addEventListener('click', () => { window.location.href = `mailto:?subject=Relatório de Falhas de Etiquetas&body=${encodeURIComponent(aiReportOutput.textContent)}`; });
+      
+      generatePdfBtn.addEventListener('click', () => {
+        const element = document.getElementById('report-content-to-print');
+        const opt = {
+          margin:       0.5,
+          filename:     'relatorio_falhas_etiquetas.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true, logging: false },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        const elementToPrint = element.cloneNode(true);
+        elementToPrint.querySelector('.header-actions').remove();
+        elementToPrint.querySelector('#ai-report-section .form-navigation').remove();
+        elementToPrint.querySelector('#generateAiTextBtn').remove();
+
+        html2pdf().from(elementToPrint).set(opt).save();
+      });
+
+      // --- LÓGICA DA PÁGINA PRINCIPAL ---
+      function applyTheme(theme) { document.documentElement.className = theme; themeToggleBtn.innerHTML = theme === 'dark-mode' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; localStorage.setItem(THEME_KEY, theme); }
+      function setupModal() { mainModal.querySelectorAll('.close-btn').forEach(btn => btn.onclick = () => mainModal.style.display = 'none'); mainModal.onclick = (event) => { if (event.target === mainModal) mainModal.style.display = 'none'; }; }
+      function showModal(title, content) { modalTitle.innerHTML = title; modalBody.innerHTML = content; mainModal.style.display = 'flex'; }
+      function populateSelectsAndChecklist() {
+        unidades.sort().forEach(unit => {
+          unidadeSelect.add(new Option(unit, unit));
+          checklistContainer.insertAdjacentHTML('beforeend', `<label><input type="checkbox" data-unit="${unit}"> ${unit}</label>`);
+        });
+        document.getElementById('checklist-count').textContent = `Unidades com registro: 0 / ${TOTAL_UNIDADES}`;
+      }
+      function updateVisitorCount() { let count = parseInt(localStorage.getItem(VISITOR_KEY) || '0'); if (!sessionStorage.getItem('visited')) { count++; localStorage.setItem(VISITOR_KEY, count); sessionStorage.setItem('visited', 'true'); } document.getElementById('visitor-count').textContent = `Total de Visitas: ${count}`; }
+      function updateChecklistVisual() { const states = JSON.parse(localStorage.getItem(CHECK_KEY) || '{}'); let checkedCount = 0; document.querySelectorAll('#checklist-container input').forEach(cb => { cb.checked = !!states[cb.dataset.unit]; if (cb.checked) checkedCount++; }); document.getElementById('checklist-count').textContent = `Unidades com registro: ${checkedCount} / ${TOTAL_UNIDADES}`; }
+      function updateNumericalSummary() {
+        const allFeedbacks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const totalFalhas = allFeedbacks.reduce((sum, f) => sum + parseInt(f.quantidade || 0), 0);
+        const falhasPorUnidade = allFeedbacks.reduce((acc, f) => { if (f.unidade) acc[f.unidade] = (acc[f.unidade] || 0) + parseInt(f.quantidade || 0); return acc; }, {});
+        document.getElementById('numerical-summary').innerHTML = `<div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h4>Total de Falhas</h4><p>${totalFalhas}</p></div><div class="stat-card"><i class="fas fa-sitemap"></i><h4>Unidades com Registro</h4><p>${Object.keys(falhasPorUnidade).length}</p></div><div class="stat-card"><h4>Detalhamento</h4><ul id="unit-breakdown-list">${Object.keys(falhasPorUnidade).length > 0 ? Object.entries(falhasPorUnidade).map(([unit, count]) => `<li><strong>${unit}:</strong> ${count}</li>`).join('') : '<li>Nenhum registro.</li>'}</ul></div>`;
+      }
+      
+      function validateForm() {
+        let isValid = true;
+        form.querySelectorAll('[required]').forEach(input => {
+          if (!input.value.trim()) {
+            isValid = false;
+            input.style.borderColor = 'var(--danger-color)';
+          } else {
+            input.style.borderColor = 'var(--border-color)';
+          }
+        });
+        return isValid;
+      }
+
+      async function handleFormSubmit(event) {
+        event.preventDefault();
+        if (!validateForm()) {
+          showModal('Atenção!', '<p>Por favor, preencha todos os campos obrigatórios.</p>');
+          return;
+        }
+        const registerBtn = document.getElementById('registerBtn');
+        registerBtn.disabled = true; registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+        
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.timestamp = new Date().toLocaleString('pt-BR');
+        
+        const allFeedbacks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        allFeedbacks.push(data);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(allFeedbacks));
+        
+        const checklistStates = JSON.parse(localStorage.getItem(CHECK_KEY) || '{}');
+        checklistStates[data.unidade] = true;
+        localStorage.setItem(CHECK_KEY, JSON.stringify(checklistStates));
+        
+        setTimeout(() => { 
+          showModal('<i class="fas fa-check-circle"></i> Sucesso!', '<p>Registro de falha enviado com sucesso.</p>'); 
+          form.reset(); 
+          updateNumericalSummary(); 
+          updateChecklistVisual(); 
+          registerBtn.disabled = false; 
+          registerBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Falha'; 
+        }, 1000);
+      }
+      
+      infoBtn.addEventListener('click', () => showModal('<i class="fas fa-info-circle"></i> Sobre', `<p>Ferramenta para registrar e visualizar falhas em etiquetas.</p><ul><li>Preencha o <strong>formulário</strong> para registrar uma ocorrência.</li><li>O <strong>resumo geral</strong> é atualizado automaticamente.</li><li>Clique em <i class="fas fa-robot"></i> para gerar um <strong>relatório com IA</strong>.</li></ul>`));
+      viewRecordsBtn.addEventListener('click', () => {
+        const allFeedbacks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        let tableHtml = '<p>Nenhum registro encontrado.</p>';
+        if (allFeedbacks.length > 0) { tableHtml = `<div style="max-height: 400px; overflow-y: auto;"><table id="recordsTable"><thead><tr><th>Data</th><th>Unidade</th><th>Qtde</th><th>Responsável</th><th>Comentário</th><th>Registro</th></tr></thead><tbody>${allFeedbacks.map(r => `<tr><td>${r.data||''}</td><td>${r.unidade||''}</td><td>${r.quantidade||''}</td><td>${r.responsavel||''}</td><td>${r.comentario||''}</td><td>${r.timestamp||''}</td></tr>`).join('')}</tbody></table></div>`; }
+        showModal('<i class="fas fa-list-alt"></i> Registros Salvos', tableHtml);
+      });
+      
+      // --- INICIALIZAÇÃO ---
+      applyTheme(localStorage.getItem(THEME_KEY) || 'light-mode');
+      themeToggleBtn.addEventListener('click', () => applyTheme(document.documentElement.classList.contains('dark-mode') ? 'light-mode' : 'dark-mode'));
+      setupModal();
+      populateSelectsAndChecklist();
+      updateVisitorCount();
+      updateChecklistVisual();
+      updateNumericalSummary();
+      form.addEventListener('submit', handleFormSubmit);
+    });
+  </script>
+</body>
+</html>
