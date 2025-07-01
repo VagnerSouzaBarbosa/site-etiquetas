@@ -5,12 +5,18 @@
   <title>Registro de Falhas de Etiquetas</title>
   <link rel="icon" type="image/x-icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdRZj6UwfwUFfvlmCfFUDzQMDJz7YZioF_de0F8SLA5yHB8dxPEFCCUgEDGW4ERl8-fI&usqp=CAU">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Otimização de Fontes: Pré-conexão para acelerar o carregamento -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <!-- Otimização de CSS: Carregamento assíncrono para não bloquear a renderização -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700&display=swap"></noscript>
+  
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
   <style>
     :root {
       --bg-light: #f4f7fa; --card-bg-light: #ffffff; --text-light: #2c3e50; --text-muted-light: #7f8c8d; --border-light: #e0e6ed;
@@ -29,10 +35,10 @@
       background-attachment: fixed;
     }
     html.light-mode body {
-        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('crie uma imagem responsivo .jpg');
+        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('crie uma imagem responsivo .png');
     }
     html.dark-mode body {
-        background-image: linear-gradient(rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.95)), url('crie uma imagem responsivo .jpg');
+        background-image: linear-gradient(rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.95)), url('crie uma imagem responsivo .png');
     }
     .app-layout {
         display: flex;
@@ -180,7 +186,7 @@
     .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; color: var(--accent-color); }
     .modal-header .close-btn { font-size: 1.8rem; cursor: pointer; color: var(--text-muted); background: none; border: none; }
     
-    /* CORREÇÃO: CSS Responsivo para Sidebars */
+    /* CSS Responsivo para Sidebars */
     .sidebar { display: none; }
     .notice-board-inline { display: block; }
 
@@ -261,7 +267,7 @@
                 <h2><i class="fas fa-chart-pie"></i> Resumo Geral</h2><div id="numerical-summary" class="numerical-summary"></div>
               </section>
               
-              <!-- CORREÇÃO: Mural de Avisos para telas menores -->
+              <!-- Mural de Avisos para telas menores -->
               <section class="notice-board-inline">
                   <h2><i class="fas fa-bullhorn"></i> Comunicados</h2>
                   <div class="notice-board">
@@ -360,6 +366,9 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+  
   <script type="module">
     // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
