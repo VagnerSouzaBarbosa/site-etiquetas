@@ -51,10 +51,10 @@
       background-attachment: fixed;
     }
     html.light-mode body {
-        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('planodefundo.png');
+        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('planodefundo.jpg');
     }
     html.dark-mode body {
-        background-image: linear-gradient(rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.95)), url('planodefundoescuro.png');
+        background-image: linear-gradient(rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.95)), url('planodefundoescuro.jpg');
     }
     .app-layout {
         display: flex;
@@ -627,6 +627,8 @@
           dom.registerBtn.disabled = true; dom.registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
           
           const data = Object.fromEntries(new FormData(dom.form).entries());
+          // CORREÇÃO: Remove o campo de foto antes de enviar para o Firestore
+          delete data.foto;
           data.timestamp = new Date().toLocaleString('pt-BR');
           
           try {
@@ -634,6 +636,7 @@
             uiService.showModal('<i class="fas fa-check-circle"></i> Sucesso!', '<p>Registro de falha enviado com sucesso.</p>'); 
             dom.form.reset(); 
           } catch(e) {
+            console.error("Erro ao submeter:", e);
             uiService.showModal('Erro', 'Não foi possível registrar a falha. Verifique sua conexão e tente novamente.');
           } finally {
             dom.registerBtn.disabled = false; dom.registerBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Falha'; 
