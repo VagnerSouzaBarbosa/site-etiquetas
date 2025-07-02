@@ -52,10 +52,10 @@
       background-attachment: fixed;
     }
     html.light-mode body {
-        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('planodefundo.png');
+        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('planodefundo.jpg');
     }
     html.dark-mode body {
-        background-image: linear-gradient(rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.95)), url('planodefundoescuro.png');
+        background-image: linear-gradient(rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.95)), url('planodefundoescuro.jpg');
     }
     .app-layout {
         display: flex;
@@ -333,6 +333,7 @@
                 <button id="themeToggleBtn" title="Alternar Modo"><i class="fas fa-sun"></i></button>
                 <button id="infoBtn" title="Sobre esta página"><i class="fas fa-info-circle"></i></button>
                 <button id="viewRecordsBtn" title="Ver Registros"><i class="fas fa-list-alt"></i></button>
+                <button id="clearDataBtn" title="Limpar Dados"><i class="fas fa-trash"></i></button>
               </div>
             </header>
             <main class="body">
@@ -370,6 +371,7 @@
                               <span class="day">27</span><span class="day event event-coleta">28</span><span class="day event event-coleta">29</span><span class="day">30</span><span class="day">31</span>
                             </div>
                           </div>
+                          <div class="calendar-info-display">Passe o rato sobre uma data para ver os detalhes.</div>
                           <div class="calendar-legend">
                             <div><span class="color-box" style="background-color: var(--accent-color);"></span> Lanches e Mat. Expediente</div>
                             <div><span class="color-box" style="background-color: var(--success-color);"></span> Pedido Unidades Interior</div>
@@ -458,7 +460,7 @@
   <script type="module">
     // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
     // Sua configuração do Firebase
     const firebaseConfig = {
@@ -500,6 +502,7 @@
         themeToggleBtn: document.getElementById('themeToggleBtn'),
         infoBtn: document.getElementById('infoBtn'),
         viewRecordsBtn: document.getElementById('viewRecordsBtn'),
+        clearDataBtn: document.getElementById('clearDataBtn'),
         generateAiTextBtn: document.getElementById('generateAiTextBtn'),
         aiReportOutput: document.getElementById('ai-report-output'),
         copyReportBtn: document.getElementById('copyReportBtn'),
@@ -526,6 +529,16 @@
           });
         },
         addFeedback: (data) => addDoc(collection(db, 'falhas'), data),
+        clearAllData: async () => {
+            const feedbacksCol = collection(db, 'falhas');
+            const snapshot = await getDocs(feedbacksCol);
+            const batch = writeBatch(db);
+            snapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+            localStorage.removeItem(VISITOR_KEY);
+        },
         processData: (feedbacks) => {
           const totalFalhas = feedbacks.reduce((sum, f) => sum + parseInt(f.quantidade || 0), 0);
           const falhasPorUnidade = feedbacks.reduce((acc, f) => {
@@ -679,6 +692,7 @@
           dom.themeToggleBtn.addEventListener('click', () => uiService.applyTheme(document.documentElement.classList.contains('dark-mode') ? 'light-mode' : 'dark-mode'));
           dom.infoBtn.addEventListener('click', () => uiService.showModal('<i class="fas fa-info-circle"></i> Sobre', `<p>Ferramenta para registrar e visualizar falhas em etiquetas.</p><ul><li>Preencha o <strong>formulário</strong> para registrar uma ocorrência.</li><li>O <strong>resumo geral</strong> é atualizado automaticamente.</li><li>Clique em <i class="fas fa-robot"></i> para gerar um <strong>relatório com IA</strong>.</li></ul>`));
           dom.viewRecordsBtn.addEventListener('click', app.handleViewRecords);
+          dom.clearDataBtn.addEventListener('click', app.handleClearData);
           dom.generateAiTextBtn.addEventListener('click', app.handleGenerateAiReport);
           dom.copyReportBtn.addEventListener('click', () => navigator.clipboard.writeText(dom.aiReportOutput.textContent).then(() => uiService.showModal('Copiado!', '<p>Relatório copiado para a área de transferência.</p>')));
           dom.generatePdfBtn.addEventListener('click', app.handleGeneratePdf);
@@ -724,6 +738,23 @@
             tableHtml = `<div style="max-height: 400px; overflow-y: auto;"><table id="recordsTable"><thead><tr><th>Data</th><th>Unidade</th><th>Qtde</th><th>Responsável</th><th>Comentário</th><th>Registro</th></tr></thead><tbody>${allFeedbacks.map(r => `<tr><td>${r.data||''}</td><td>${r.unidade||''}</td><td>${r.quantidade||''}</td><td>${r.responsavel||''}</td><td>${r.comentario||''}</td><td>${r.timestamp||''}</td></tr>`).join('')}</tbody></table></div>`;
           }
           uiService.showModal('<i class="fas fa-list-alt"></i> Registros Salvos', tableHtml);
+        },
+        handleClearData: async () => {
+            const password = prompt("Para apagar todos os dados, por favor, insira a senha:");
+            if (password === "Sup@4458") {
+                if (confirm("Tem certeza que deseja apagar TODOS os dados de falhas e visitas? Esta ação não pode ser desfeita.")) {
+                    try {
+                        await dataService.clearAllData();
+                        uiService.showModal('Sucesso', 'Todos os dados foram apagados.');
+                        location.reload();
+                    } catch (e) {
+                        console.error("Erro ao limpar dados:", e);
+                        uiService.showModal('Erro', 'Não foi possível apagar os dados.');
+                    }
+                }
+            } else if (password !== null) {
+                uiService.showModal('Acesso Negado', 'A senha inserida está incorreta.');
+            }
         },
         handleGenerateAiReport: async () => {
           dom.generateAiTextBtn.disabled = true;
