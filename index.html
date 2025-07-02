@@ -52,10 +52,10 @@
       background-attachment: fixed;
     }
     html.light-mode body {
-        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('planodefundo.png');
+        background-image: linear-gradient(rgba(244, 247, 250, 0.95), rgba(244, 247, 250, 0.95)), url('planodefundo.jpg');
     }
     html.dark-mode body {
-        background-image: linear-gradient(rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.95)), url('planodefundoescuro.png');
+        background-image: linear-gradient(rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.95)), url('planodefundoescuro.jpg');
     }
     .app-layout {
         display: flex;
@@ -80,7 +80,7 @@
     .header {
       background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent-color) 100%); 
       color: #0a192f; 
-      display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+      display: flex; align-items: center; justify-content: space-between; padding: 1.5rem;
       border-bottom: 2px solid var(--accent-color);
     }
     .header-title { display: flex; align-items: center; gap: 1rem; }
@@ -95,9 +95,8 @@
     .header h1 {
         font-family: 'Poppins', sans-serif;
         font-size: 1.7rem;
-        display: none;
     }
-    .header-actions { display: none; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-end; }
+    .header-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-end; }
     .header-actions button {
       background: rgba(10, 25, 47, 0.2); border: 1px solid rgba(255,215,0,0.3); color: #0a192f; width: 40px; height: 40px; border-radius: 50%;
       font-size: 1.2rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center;
@@ -629,9 +628,9 @@
         },
         setupCalendars: () => {
             const eventDescriptions = {
-              'event-lanche': 'Dias 07, 08 e 09: Grande João Pessoa: Lanche, Copa e Limpeza',
-              'event-interior': 'Dias 21 e 22: Interior: Todos os Grupos.',
-              'event-coleta': 'Dias 28 e 29: Grande João Pessoa: Coleta e Lanche.'
+              'event-lanche': 'Dias 07, 08 e 09: Requisitar Lanche e Expediente.',
+              'event-interior': 'Dias 21 e 22: Interior Todos os Grupos.',
+              'event-coleta': 'Dias 28 e 29: Coleta e Lanche.'
             };
             
             dom.calendarGrids.forEach(grid => {
