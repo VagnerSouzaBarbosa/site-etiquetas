@@ -57,46 +57,10 @@
     html.dark-mode body {
         background-image: linear-gradient(rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.95)), url('planodefundoescuro.jpg');
     }
-    .page { display: none; }
-    .page.active { display: block; animation: fadeInPage 0.5s ease-out; }
-    @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
-
-    /* Estilos da Tela de Login */
-    #login-page {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: calc(100vh - 4rem);
-    }
-    #login-card {
-        width: 100%;
-        max-width: 450px;
-    }
-    #login-card .header-title {
-        flex-direction: column;
-        gap: 1.5rem;
-        padding-bottom: 2rem;
-    }
-    #login-card h1 { font-size: 1.5rem; color: #0a192f; }
-    #login-card .body { padding-top: 1rem;}
-
-    .app-layout {
-        display: none; /* Inicia oculto */
-        justify-content: center;
-        width: 100%;
-        max-width: 1600px;
-        margin: 0 auto;
-    }
-    .app-layout.active {
-        display: flex; /* Mostra quando ativo */
-        align-items: flex-start;
-        gap: 2rem;
-    }
-    .main-content {
+    .container {
         width: 100%;
         max-width: 850px;
-        flex-shrink: 0;
+        margin: 0 auto;
     }
     .card { 
         background-color: var(--card-bg); 
@@ -157,65 +121,168 @@
     .btn:hover { background:var(--accent-dark); transform: translateY(-2px); }
     .btn:disabled { background: #999; cursor: not-allowed; transform: none; }
     
+    .page { display: none; }
+    .page.active { display: block; animation: fadeInPage 0.5s ease-out; }
+    @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Estilos do Mural de Avisos */
+    .notice-board {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+    .notice-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-dark);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+    }
+    .notice-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.08);
+        border-color: var(--accent-color);
+    }
+    .notice-card-content {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    .notice-card-content h3 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--accent-color);
+    }
+    .notice-card-content .btn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+        margin-top: auto;
+    }
+    .rotating-message {
+        font-size: 1.05rem;
+        line-height: 1.6;
+        color: var(--text-primary);
+        margin: 1rem 0;
+        min-height: 100px; 
+        transition: opacity 0.5s ease-in-out;
+        font-weight: 700;
+    }
+    .calendar { margin-top: 1rem; margin-bottom: 1rem; position: relative; }
+    .calendar-header { text-align: center; font-weight: 700; margin-bottom: 0.75rem; font-size: 1.1rem; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+    .calendar-grid .weekday { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
+    .calendar-grid .day { padding: 6px; border-radius: 50%; font-size: 0.9rem; line-height: 1.5; cursor: default; position: relative; }
+    .calendar-grid .day.event { cursor: pointer; transition: transform 0.2s; }
+    .calendar-grid .day.event:hover { transform: scale(1.2); z-index: 11; }
+    .calendar-grid .day.event-lanche { background-color: var(--accent-color); color: #0a192f; font-weight: 700; }
+    .calendar-grid .day.event-interior { background-color: var(--success-color); color: white; font-weight: 700; }
+    .calendar-grid .day.event-coleta { background-color: var(--coleta-color); color: white; font-weight: 700; }
+    .calendar-legend { margin-top: 1rem; font-size: 0.85rem; }
+    .calendar-legend div { display: flex; align-items: center; margin-bottom: 0.35rem; }
+    .calendar-legend .color-box { width: 15px; height: 15px; margin-right: 8px; border-radius: 4px; }
+    .calendar-tooltip {
+        position: absolute;
+        display: none;
+        background-color: var(--card-bg-dark);
+        color: var(--text-dark);
+        border: 1px solid var(--accent-color);
+        padding: 0.75rem;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        z-index: 1000;
+        pointer-events: none;
+        font-size: 0.9rem;
+        max-width: 200px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    
+    .report-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2.5rem; }
+    .chart-card { 
+      background-color: var(--card-bg); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border-dark);
+      position: relative; height: 350px; 
+    }
+    .chart-card h3 { text-align: center; margin-bottom: 1.5rem; font-family: 'Poppins', sans-serif; font-size: 1.1rem; }
+    #ai-report-section { background-color: var(--card-bg); border: 1px solid var(--border-dark); padding: 1.5rem; border-radius: var(--radius); }
+    #ai-report-output { margin-top: 1.5rem; padding: 1.5rem; border-radius: 8px; background-color: var(--bg); min-height: 150px; white-space: pre-wrap; line-height: 1.6; }
+    .loader { width: 20px; height: 20px; border: 3px solid var(--text-muted); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .numerical-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+    .stat-card { background-color: var(--card-bg); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border-dark); text-align: center; transition: var(--transition); }
+    .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: var(--accent-color); }
+    .stat-card i { font-size: 2.5rem; color: var(--accent-color); margin-bottom: 1rem; }
+    .stat-card h4 { font-family: 'Poppins', sans-serif; font-size: 1rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .stat-card p { font-size: 2.5rem; font-weight: 700; }
+    #unit-breakdown-list { list-style-type: none; padding: 0; max-height: 180px; overflow-y: auto; text-align: left; margin-top: 1rem; }
+    .checklist { background-color: var(--card-bg); border: 1px solid var(--border-dark); padding:1.5rem; border-radius:var(--radius); }
+    #checklist-container { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:.75rem 1.5rem; max-height:250px; overflow-y:auto; padding-top: 1rem; }
+    #checklist-container label { display:flex; align-items:center; gap:.5rem; font-size:.9rem; opacity: 0.8; }
+    #checklist-container input[type="checkbox"] { pointer-events: none; }
+    #counters { margin-top:2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-dark); text-align:center; font-size:1rem; font-weight:700; display: flex; justify-content: space-around; gap: 1rem; color: var(--text-muted); }
+    
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; animation: fadeInModal 0.3s; }
+    .modal-content { background-color: var(--card-bg); margin: auto; padding: 2rem; width: 90%; max-width: 600px; border-radius: var(--radius); box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideInModal 0.4s ease-out; border: 1px solid var(--accent-color); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-dark); }
+    .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; color: var(--accent-color); }
+    .modal-header .close-btn { font-size: 1.8rem; cursor: pointer; color: var(--text-muted); background: none; border: none; }
+    
     @media (max-width: 600px) {
         body { padding: 1rem; }
-        .header { padding: 1rem; flex-direction: column; gap: 1rem; }
-        .header-title { flex-direction: column; text-align: center; }
-        .header h1 { font-size: 1.3rem; }
-        h2 { font-size: 1.2rem; }
-        .body { padding: 1.5rem; }
-        .btn { padding: 0.8rem 1.2rem; font-size: 1rem; }
+        .header {
+            padding: 1rem;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .header-title {
+            flex-direction: column;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 1.3rem;
+        }
+        h2 {
+            font-size: 1.2rem;
+        }
+        .body {
+            padding: 1.5rem;
+        }
+        .btn {
+            padding: 0.8rem 1.2rem;
+            font-size: 1rem;
+        }
+        .notice-card-content h3 {
+            font-size: 1.1rem;
+        }
     }
   </style>
 </head>
 <body>
-  
-  <div id="login-page" class="page active">
-    <div id="login-card" class="card">
-        <header class="header">
-          <div class="header-title">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdRZj6UwfwUFfvlmCfFUDzQMDJz7YZioF_de0F8SLA5yHB8dxPEFCCUgEDGW4ERl8-fI&usqp=CAU" alt="Logo">
-            <h1>Bem-vindo!</h1>
-          </div>
-        </header>
-        <main class="body">
-            <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Por favor, identifique-se para continuar.</p>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="login-nome"><i class="fas fa-user"></i> Seu Nome</label>
-                    <input type="text" id="login-nome" required placeholder="Nome completo">
-                </div>
-                <div class="form-group">
-                    <label for="login-unidade"><i class="fas fa-building"></i> Sua Unidade</label>
-                    <select id="login-unidade" required>
-                        <option value="" disabled selected>Selecione sua unidade</option>
-                    </select>
-                </div>
-                <div class="actions">
-                    <button type="submit" class="btn">Entrar</button>
-                </div>
-            </form>
-        </main>
-    </div>
-  </div>
-
-  <div class="app-layout" id="app-layout">
-    <aside class="sidebar sidebar-left">
-        </aside>
-
-    <div class="main-content">
+  <div id="calendar-tooltip" class="calendar-tooltip"></div>
+  <div class="container">
+        <!-- PÁGINA PRINCIPAL -->
         <div id="main-page" class="page active">
           <div class="card">
             <header class="header">
               <div class="header-title">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdRZj6UwfwUFfvlmCfFUDzQMDJz7YZioF_de0F8SLA5yHB8dxPEFCCUgEDGW4ERl8-fI&usqp=CAU" alt="Logo">
-                <h1 id="main-title">Registro de Falhas</h1>
+                <h1>Registro de Falhas</h1>
               </div>
               <div class="header-actions">
                 <button id="aiReportBtn" title="Relatório IA"><i class="fas fa-robot"></i></button>
                 <button id="themeToggleBtn" title="Alternar Modo"><i class="fas fa-sun"></i></button>
                 <button id="infoBtn" title="Sobre esta página"><i class="fas fa-info-circle"></i></button>
                 <button id="viewRecordsBtn" title="Ver Registros"><i class="fas fa-list-alt"></i></button>
+                <button id="clearDataBtn" title="Limpar Dados"><i class="fas fa-trash"></i></button>
               </div>
             </header>
             <main class="body">
@@ -224,14 +291,10 @@
                 <form id="feedForm" novalidate>
                   <div class="form-group"><label for="data"><i class="fas fa-calendar-alt"></i> Data da Ocorrência</label><input type="date" id="data" name="data" required></div>
                   <div class="form-group"><label for="unidade"><i class="fas fa-building"></i> Unidade</label><select id="unidade" name="unidade" required><option value="" disabled selected>Selecione a unidade</option></select></div>
-                  <div class="form-group"><label for="responsavel"><i class="fas fa-user"></i> Responsável</label><input type="text" id="responsavel" name="responsavel" required placeholder="Seu nome completo" disabled></div>
+                  <div class="form-group"><label for="responsavel"><i class="fas fa-user"></i> Responsável</label><input type="text" id="responsavel" name="responsavel" required placeholder="Seu nome completo"></div>
                   <div class="form-group"><label for="quantidade"><i class="fas fa-sort-numeric-up"></i> Quantidade</label><input type="number" id="quantidade" name="quantidade" min="1" required></div>
                   <div class="form-group"><label for="comentario"><i class="fas fa-comment-dots"></i> Descrição da Falha</label><textarea id="comentario" name="comentario" rows="4" required placeholder="Ex.: A etiqueta está descolando..."></textarea></div>
-                  <div class="form-group">
-                    <label for="foto"><i class="fas fa-camera"></i> Foto (Opcional)</label>
-                    <input type="file" id="foto" name="foto" accept="image/*">
-                    <button type="button" id="analyzeImageBtn" class="btn secondary" disabled style="margin-top: 0.5rem;">✨ Analisar Imagem</button>
-                  </div>
+                  <div class="form-group"><label for="foto"><i class="fas fa-camera"></i> Foto (Opcional)</label><input type="file" id="foto" name="foto" accept="image/*"></div>
                   <div class="actions"><button type="submit" class="btn" id="registerBtn"><i class="fas fa-paper-plane"></i> Registrar Falha</button></div>
                 </form>
               </section>
@@ -240,7 +303,38 @@
               </section>
               
               <section class="notice-board-inline">
-                  </section>
+                  <h2><i class="fas fa-bullhorn"></i> Comunicados</h2>
+                  <div class="notice-board">
+                    <div class="notice-card">
+                        <div class="notice-card-content">
+                          <h3>Julho - Cronograma de Envio</h3>
+                          <div class="calendar">
+                            <div class="calendar-header">Julho 2025</div>
+                            <div class="calendar-grid" id="inline-calendar-grid">
+                              <span class="weekday">D</span><span class="weekday">S</span><span class="weekday">T</span><span class="weekday">Q</span><span class="weekday">Q</span><span class="weekday">S</span><span class="weekday">S</span>
+                              <span></span><span></span><span class="day">1</span><span class="day">2</span><span class="day">3</span><span class="day">4</span><span class="day">5</span>
+                              <span class="day">6</span><span class="day event event-lanche">7</span><span class="day event event-lanche">8</span><span class="day event event-lanche">9</span><span class="day">10</span><span class="day">11</span><span class="day">12</span>
+                              <span class="day">13</span><span class="day">14</span><span class="day">15</span><span class="day">16</span><span class="day">17</span><span class="day">18</span><span class="day">19</span>
+                              <span class="day">20</span><span class="day event event-interior">21</span><span class="day event event-interior">22</span><span class="day">23</span><span class="day">24</span><span class="day">25</span><span class="day">26</span>
+                              <span class="day">27</span><span class="day event event-coleta">28</span><span class="day event event-coleta">29</span><span class="day">30</span><span class="day">31</span>
+                            </div>
+                          </div>
+                          <div class="calendar-legend">
+                            <div><span class="color-box" style="background-color: var(--accent-color);"></span> Lanches e Mat. Expediente</div>
+                            <div><span class="color-box" style="background-color: var(--success-color);"></span> Pedido Unidades Interior</div>
+                            <div><span class="color-box" style="background-color: var(--coleta-color);"></span> Coleta e Lanche</div>
+                          </div>
+                          <a href="https://shiftlis.roseannedore.com.br/" class="btn" target="_blank" rel="noopener noreferrer">SHIFT</a>
+                        </div>
+                    </div>
+                    <div class="notice-card" id="attention-card">
+                        <div class="notice-card-content">
+                          <h3><i class="fas fa-info-circle"></i> Atenção às Requisições</h3>
+                          <p class="rotating-message"></p>
+                        </div>
+                    </div>
+                  </div>
+              </section>
 
               <section id="checklist-section">
                 <h2><i class="fas fa-tasks"></i> Status de Registro por Unidade</h2><div class="checklist"><div id="checklist-container"></div></div>
@@ -252,6 +346,7 @@
           </div>
         </div>
 
+        <!-- PÁGINA DE RELATÓRIO -->
         <div id="report-page" class="page">
           <div class="card">
             <div id="report-content-to-print">
@@ -272,16 +367,11 @@
                     <h2><i class="fas fa-magic"></i> Relatório para Fornecedor</h2>
                     <div id="ai-report-output" style="margin-top:0;">Clique em "Gerar Análise" para criar o relatório...</div>
                   </section>
-                   <section id="ai-management-section">
-                    <h2><i class="fas fa-lightbulb"></i> ✨ Insights de Gestão</h2>
-                    <div id="ai-management-output" style="margin-top:0;">Clique em "Gerar Insights" para criar um resumo executivo...</div>
-                  </section>
                 </main>
             </div>
             <div class="body" style="padding-top: 0;">
                 <div class="form-navigation" style="justify-content: space-between;">
-                    <button class="btn" id="generateAiTextBtn"><i class="fas fa-cogs"></i> Gerar para Fornecedor</button>
-                    <button class="btn" id="generateManagementReportBtn" style="background-color: var(--success-color);"><i class="fas fa-lightbulb"></i> Gerar Insights</button>
+                    <button class="btn" id="generateAiTextBtn"><i class="fas fa-cogs"></i> Gerar Análise</button>
                     <div>
                       <button class="btn secondary" id="copyReportBtn" disabled><i class="fas fa-copy"></i> Copiar</button>
                       <button class="btn" id="generatePdfBtn" disabled style="margin-left: 1rem; background-color: var(--danger-color);"><i class="fas fa-file-pdf"></i> Gerar PDF</button>
@@ -291,21 +381,23 @@
           </div>
         </div>
     </div>
-    
-    <aside class="sidebar sidebar-right">
-        </aside>
   </div>
 
+  <!-- Modal Genérico -->
   <div id="mainModal" class="modal">
-      </div>
-  
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+    <div class="modal-content">
+      <div class="modal-header"><h3 id="modalTitle"></h3><button class="close-btn">&times;</button></div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer"><button class="btn close-btn">Fechar</button></div>
+    </div>
+  </div>
   
   <script type="module">
+    // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
+    // Sua configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyANadM-WbuGFKp5dz_09rjtsLUX-DTu908",
       authDomain: "etiquetas-falhas.firebaseapp.com",
@@ -316,158 +408,346 @@
       measurementId: "G-31F5QV4YZ8"
     };
 
+    // Inicializa o Firebase e o Firestore
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     document.addEventListener('DOMContentLoaded', () => {
-      // --- CONSTANTES ---
-      const USER_INFO_KEY = 'userInfo_v2';
+      // --- CONSTANTES E VARIÁVEIS GLOBAIS ---
+      const VISITOR_KEY = 'site_visitors_v15';
+      const THEME_KEY = 'site_theme_v15';
       const unidades = ["ALTIPLANO", "BAIRRO DOS ESTADOS", "BANCARIOS", "BAYEUX", "BESSA", "BESSA II", "CABEDELO", "CRISTO REDENTOR", "CRUZ DAS ARMAS", "EPITÁCIO", "GEISEL", "GUARABIRA", "INTERMARES", "MAMANGUAPE", "MANAÍRA", "MANGABEIRA", "NOVA DIAGNÓSTICO", "PATOS", "SANTA RITA", "SAPÉ", "SAPÉ II", "TAMBÁU", "TORRE", "VALENTINA", "COLETA DOMICILIAR"];
-      
+      const TOTAL_UNIDADES = unidades.length;
+      let chartInstances = {};
+      let allFeedbacks = []; // Cache local dos dados
+      let messageIntervalId = null;
+
       // --- SELETORES DE DOM ---
       const dom = {
-          loginPage: document.getElementById('login-page'),
-          appLayout: document.getElementById('app-layout'),
-          loginForm: document.getElementById('login-form'),
-          loginNome: document.getElementById('login-nome'),
-          loginUnidade: document.getElementById('login-unidade'),
-          mainUnidadeSelect: document.getElementById('unidade'),
-          mainResponsavelInput: document.getElementById('responsavel'),
-          mainTitle: document.getElementById('main-title'),
-          fotoInput: document.getElementById('foto'),
-          analyzeImageBtn: document.getElementById('analyzeImageBtn'),
-          comentarioTextarea: document.getElementById('comentario'),
-          generateManagementReportBtn: document.getElementById('generateManagementReportBtn'),
-          aiManagementOutput: document.getElementById('ai-management-output'),
-          // ... (restantes seletores de DOM da app principal)
+        mainPage: document.getElementById('main-page'),
+        reportPage: document.getElementById('report-page'),
+        aiReportBtn: document.getElementById('aiReportBtn'),
+        backToMainBtn: document.getElementById('backToMainBtn'),
+        form: document.getElementById('feedForm'),
+        unidadeSelect: document.getElementById('unidade'),
+        checklistContainer: document.getElementById('checklist-container'),
+        mainModal: document.getElementById('mainModal'),
+        modalTitle: document.getElementById('modalTitle'),
+        modalBody: document.getElementById('modalBody'),
+        themeToggleBtn: document.getElementById('themeToggleBtn'),
+        infoBtn: document.getElementById('infoBtn'),
+        viewRecordsBtn: document.getElementById('viewRecordsBtn'),
+        clearDataBtn: document.getElementById('clearDataBtn'),
+        generateAiTextBtn: document.getElementById('generateAiTextBtn'),
+        aiReportOutput: document.getElementById('ai-report-output'),
+        copyReportBtn: document.getElementById('copyReportBtn'),
+        generatePdfBtn: document.getElementById('generatePdfBtn'),
+        checklistCount: document.getElementById('checklist-count'),
+        visitorCount: document.getElementById('visitor-count'),
+        numericalSummary: document.getElementById('numerical-summary'),
+        registerBtn: document.getElementById('registerBtn'),
+        rotatingMessages: document.querySelectorAll('.rotating-message'),
+        calendarGrids: document.querySelectorAll('.calendar-grid'),
+        calendarTooltip: document.getElementById('calendar-tooltip'),
+        attentionCard: document.getElementById('attention-card')
       };
 
-      // --- LÓGICA DE INICIALIZAÇÃO ---
-      const app = {
-        init() {
-          this.populateUnidades();
-          this.checkSession();
-          this.bindLoginEvents();
-          this.bindMainAppEvents();
+      // --- SERVIÇOS DE DADOS E UI ---
+      const dataService = {
+        listenForUpdates: (callback) => {
+          onSnapshot(collection(db, 'falhas'), (snapshot) => {
+            allFeedbacks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            callback(allFeedbacks);
+          }, (error) => {
+            console.error("Erro ao ouvir o banco de dados:", error);
+            uiService.showModal('Erro de Conexão', 'Não foi possível carregar os dados. Verifique a sua conexão com a internet.');
+          });
         },
-        populateUnidades() {
-            unidades.sort().forEach(unit => {
-                dom.loginUnidade.add(new Option(unit, unit));
-                dom.mainUnidadeSelect.add(new Option(unit, unit));
+        addFeedback: (data) => addDoc(collection(db, 'falhas'), data),
+        clearAllData: async () => {
+            const feedbacksCol = collection(db, 'falhas');
+            const snapshot = await getDocs(feedbacksCol);
+            const batch = writeBatch(db);
+            snapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
             });
+            await batch.commit();
+            localStorage.removeItem(VISITOR_KEY);
         },
-        checkSession() {
-            const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
-            if (userInfo && userInfo.name && userInfo.unit) {
-                this.showApp(userInfo);
-            } else {
-                dom.loginPage.classList.add('active');
-            }
-        },
-        bindLoginEvents() {
-            dom.loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = dom.loginNome.value.trim();
-                const unit = dom.loginUnidade.value;
-
-                if (name && unit) {
-                    const userInfo = { name, unit };
-                    sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));
-                    this.showApp(userInfo);
-                } else {
-                    alert('Por favor, preencha todos os campos.');
-                }
-            });
-        },
-        showApp(userInfo) {
-            dom.loginPage.style.display = 'none';
-            dom.appLayout.classList.add('active');
-            this.prefillForm(userInfo);
-        },
-        prefillForm(userInfo) {
-            dom.mainResponsavelInput.value = userInfo.name;
-            dom.mainUnidadeSelect.value = userInfo.unit;
-            dom.mainTitle.textContent = `Unidade: ${userInfo.unit}`;
-        },
-        bindMainAppEvents() {
-            // ... (todos os outros event listeners da app principal)
-            dom.fotoInput.addEventListener('change', () => {
-                dom.analyzeImageBtn.disabled = !dom.fotoInput.files.length;
-            });
-            dom.analyzeImageBtn.addEventListener('click', this.handleImageAnalysis);
-            dom.generateManagementReportBtn.addEventListener('click', this.handleGenerateManagementReport);
-        },
-        handleImageAnalysis: async () => {
-            const file = dom.fotoInput.files[0];
-            if (!file) return;
-
-            dom.analyzeImageBtn.disabled = true;
-            dom.analyzeImageBtn.innerHTML = '<div class="loader"></div> Analisando...';
-
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const base64ImageData = reader.result.split(',')[1];
-                const prompt = "Analise esta imagem de uma etiqueta de laboratório com defeito. Descreva o problema de forma concisa e objetiva. Por exemplo: 'Etiqueta com falha de impressão na parte superior' ou 'Etiqueta descolando na lateral direita'.";
-
-                try {
-                    const payload = {
-                        contents: [{
-                            parts: [
-                                { text: prompt },
-                                { inline_data: { mime_type: file.type, data: base64ImageData } }
-                            ]
-                        }]
-                    };
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                    const result = await response.json();
-                    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (text) {
-                        dom.comentarioTextarea.value = text;
-                    } else {
-                        throw new Error("Resposta da IA inválida.");
-                    }
-                } catch (error) {
-                    alert(`Erro ao analisar a imagem: ${error.message}`);
-                } finally {
-                    dom.analyzeImageBtn.disabled = false;
-                    dom.analyzeImageBtn.innerHTML = '✨ Analisar Imagem';
-                }
-            };
-        },
-        handleGenerateManagementReport: async () => {
-            // Lógica similar a handleGenerateAiReport, mas com prompt e output diferentes
-            const btn = dom.generateManagementReportBtn;
-            btn.disabled = true;
-            btn.innerHTML = '<div class="loader"></div> Gerando...';
-            dom.aiManagementOutput.textContent = "Analisando dados para o resumo executivo...";
-            
-            const dataSummary = allFeedbacks.map(f => `Unidade: ${f.unidade}, Qtde: ${f.quantidade}, Desc: ${f.comentario}`).join('; ');
-            const prompt = `Aja como um gestor de qualidade. Com base nos seguintes dados, crie um resumo executivo interno (insights de gestão). O resumo deve: 1. Apresentar o número total de falhas e o impacto geral. 2. Identificar as 3 unidades com mais registos e sugerir uma verificação de processos locais. 3. Apontar padrões ou tendências nos tipos de falhas descritas (ex: problemas recorrentes de adesivo, falhas de impressão). 4. Sugerir um ponto de foco para a melhoria contínua interna. Assine como "Análise de Gestão da Qualidade". Dados: ${dataSummary}`;
-
-            try {
-                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                const result = await response.json();
-                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!text) throw new Error("Resposta da IA inválida.");
-                dom.aiManagementOutput.textContent = text;
-            } catch (error) {
-                dom.aiManagementOutput.textContent = `Erro ao gerar insights: ${error.message}`;
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-lightbulb"></i> Gerar Insights Novamente';
-            }
+        processData: (feedbacks) => {
+          const totalFalhas = feedbacks.reduce((sum, f) => sum + parseInt(f.quantidade || 0), 0);
+          const falhasPorUnidade = feedbacks.reduce((acc, f) => {
+            if (f.unidade) acc[f.unidade] = (acc[f.unidade] || 0) + parseInt(f.quantidade || 0);
+            return acc;
+          }, {});
+          const unidadesComRegistro = new Set(feedbacks.map(f => f.unidade));
+          return { totalFalhas, falhasPorUnidade, unidadesComRegistro };
         }
-        // ... (restante da lógica da aplicação principal)
       };
 
+      const uiService = {
+        showPage: (pageId) => {
+          document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+          document.getElementById(pageId).classList.add('active');
+        },
+        showModal: (title, content) => {
+          dom.modalTitle.innerHTML = title;
+          dom.modalBody.innerHTML = content;
+          dom.mainModal.style.display = 'flex';
+        },
+        applyTheme: (theme) => {
+          document.documentElement.className = theme;
+          dom.themeToggleBtn.innerHTML = theme === 'dark-mode' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+          localStorage.setItem(THEME_KEY, theme);
+        },
+        updateAll: (feedbacks) => {
+          const { totalFalhas, falhasPorUnidade, unidadesComRegistro } = dataService.processData(feedbacks);
+          
+          dom.numericalSummary.innerHTML = `<div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h4>Total de Falhas</h4><p>${totalFalhas}</p></div><div class="stat-card"><i class="fas fa-sitemap"></i><h4>Unidades com Registro</h4><p>${unidadesComRegistro.size}</p></div><div class="stat-card"><h4>Detalhamento</h4><ul id="unit-breakdown-list">${Object.keys(falhasPorUnidade).length > 0 ? Object.entries(falhasPorUnidade).map(([unit, count]) => `<li><strong>${unit}:</strong> ${count}</li>`).join('') : '<li>Nenhum registro.</li>'}</ul></div>`;
+          dom.checklistCount.textContent = `Unidades com registro: ${unidadesComRegistro.size} / ${TOTAL_UNIDADES}`;
+          document.querySelectorAll('#checklist-container input').forEach(cb => {
+            cb.checked = unidadesComRegistro.has(cb.dataset.unit);
+          });
+        },
+        drawReportCharts: () => {
+          Object.values(chartInstances).forEach(chart => chart.destroy());
+          const { falhasPorUnidade, unidadesComRegistro } = dataService.processData(allFeedbacks);
+          const top5Unidades = Object.entries(falhasPorUnidade).sort((a, b) => b[1] - a[1]).slice(0, 5);
+          const chartColors = ['#FFD700', '#e74c3c', '#9b59b6', '#2ecc71', '#1abc9c'];
+          const chartOptions = { responsive: true, maintainAspectRatio: false, animation: { animateScale: true, animateRotate: true } };
+
+          chartInstances.failuresByUnit = new Chart(document.getElementById('failuresByUnitChart'), { type: 'pie', data: { labels: Object.keys(falhasPorUnidade), datasets: [{ data: Object.values(falhasPorUnidade), backgroundColor: chartColors }] }, options: { ...chartOptions, plugins: { legend: { position: 'top', labels: { color: 'var(--text-primary)'} } } } });
+          chartInstances.reportingUnits = new Chart(document.getElementById('reportingUnitsChart'), { type: 'pie', data: { labels: ['Com Registro', 'Sem Registro'], datasets: [{ data: [unidadesComRegistro.size, TOTAL_UNIDADES - unidadesComRegistro.size], backgroundColor: ['#2ecc71', '#8892b0'] }] }, options: { ...chartOptions, plugins: { legend: { position: 'top', labels: { color: 'var(--text-primary)'} } } } });
+          chartInstances.topUnits = new Chart(document.getElementById('topUnitsChart'), { type: 'bar', data: { labels: top5Unidades.map(item => item[0]), datasets: [{ label: 'Nº de Falhas', data: top5Unidades.map(item => item[1]), backgroundColor: '#FFD700' }] }, options: { ...chartOptions, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { color: 'var(--text-primary)' } }, y: { ticks: { color: 'var(--text-primary)' } } } } });
+        }
+      };
+
+      // --- LÓGICA DA APLICAÇÃO ---
+      const app = {
+        init: () => {
+          app.bindEventListeners();
+          uiService.applyTheme(localStorage.getItem(THEME_KEY) || 'dark-mode'); // Inicia com tema escuro
+          
+          unidades.sort().forEach(unit => {
+            dom.unidadeSelect.add(new Option(unit, unit));
+            dom.checklistContainer.insertAdjacentHTML('beforeend', `<label><input type="checkbox" data-unit="${unit}"> ${unit}</label>`);
+          });
+          
+          let visitorCount = parseInt(localStorage.getItem(VISITOR_KEY) || '0');
+          if (!sessionStorage.getItem('visited')) {
+            visitorCount++;
+            localStorage.setItem(VISITOR_KEY, visitorCount);
+            sessionStorage.setItem('visited', 'true');
+          }
+          dom.visitorCount.textContent = `Total de Visitas: ${visitorCount}`;
+          
+          dataService.listenForUpdates(uiService.updateAll);
+          app.startRotatingMessages();
+          app.setupCalendars();
+        },
+        startRotatingMessages: () => {
+            clearInterval(messageIntervalId);
+            const messages = [
+                "Materiais precisam ser separado antecipadamente, se organize com o cronograma.",
+                "Cada material tem custo. Cada requisição deve ter propósito.",
+                "Antes de requisitar, pergunte: é essencial ou é excesso?",
+                "Antecipar a necessidade evita o caos da urgência.",
+                "Requisições de última hora comprometem todos os processos.",
+                "Estoque não é infinito. A responsabilidade é coletiva.",
+                "O bom profissional começa pela gestão eficiente dos recursos.",
+                "Sua requisição fala sobre sua responsabilidade com a empresa.",
+                "Mais que pedir, é preciso justificar e planejar."
+            ];
+            let messageIndex = 0;
+            if (dom.rotatingMessages.length > 0) {
+                const updateMessage = () => {
+                    messageIndex = (messageIndex + 1) % messages.length;
+                    dom.rotatingMessages.forEach(el => {
+                        el.style.opacity = 0;
+                        setTimeout(() => {
+                            el.textContent = `"${messages[messageIndex]}"`;
+                            el.style.opacity = 1;
+                        }, 500);
+                    });
+                };
+                dom.rotatingMessages.forEach(el => el.textContent = `"${messages[0]}"`);
+                messageIntervalId = setInterval(updateMessage, 5000);
+            }
+        },
+        setupCalendars: () => {
+            const eventDescriptions = {
+              'event-lanche': 'Dias 07, 08 e 09: Requisitar Lanche e Expediente.',
+              'event-interior': 'Dias 21 e 22: Interior Todos os Grupos.',
+              'event-coleta': 'Dias 28 e 29: Coleta e Lanche.'
+            };
+            
+            dom.calendarGrids.forEach(grid => {
+                grid.addEventListener('mouseover', (e) => {
+                    const target = e.target;
+                    if (!target.classList.contains('event')) return;
+
+                    let description = '';
+                    if (target.classList.contains('event-lanche')) description = eventDescriptions['event-lanche'];
+                    else if (target.classList.contains('event-interior')) description = eventDescriptions['event-interior'];
+                    else if (target.classList.contains('event-coleta')) description = eventDescriptions['event-coleta'];
+                    
+                    const rect = target.getBoundingClientRect();
+                    const tooltip = dom.calendarTooltip;
+                    tooltip.textContent = description;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${rect.left - tooltip.offsetWidth - 10}px`;
+                    tooltip.style.top = `${rect.top + rect.height / 2 - tooltip.offsetHeight / 2}px`;
+                    setTimeout(() => {
+                        tooltip.style.opacity = 1;
+                        tooltip.style.transform = 'translateY(0)';
+                    }, 10);
+                });
+
+                grid.addEventListener('mouseout', (e) => {
+                    const target = e.target;
+                    if (target.classList.contains('event')) {
+                        const tooltip = dom.calendarTooltip;
+                        tooltip.style.opacity = 0;
+                        tooltip.style.transform = 'translateY(10px)';
+                        setTimeout(() => { tooltip.style.display = 'none'; }, 300);
+                    }
+                });
+            });
+        },
+        bindEventListeners: () => {
+          dom.aiReportBtn.addEventListener('click', () => {
+            uiService.showPage('report-page');
+            uiService.drawReportCharts();
+          });
+          dom.backToMainBtn.addEventListener('click', () => {
+            uiService.showPage('main-page');
+            Object.values(chartInstances).forEach(chart => chart.destroy());
+          });
+          dom.form.addEventListener('submit', app.handleFormSubmit);
+          dom.themeToggleBtn.addEventListener('click', () => uiService.applyTheme(document.documentElement.classList.contains('dark-mode') ? 'light-mode' : 'dark-mode'));
+          dom.infoBtn.addEventListener('click', () => uiService.showModal('<i class="fas fa-info-circle"></i> Sobre', `<p>Ferramenta para registrar e visualizar falhas em etiquetas.</p><ul><li>Preencha o <strong>formulário</strong> para registrar uma ocorrência.</li><li>O <strong>resumo geral</strong> é atualizado automaticamente.</li><li>Clique em <i class="fas fa-robot"></i> para gerar um <strong>relatório com IA</strong>.</li></ul>`));
+          dom.viewRecordsBtn.addEventListener('click', app.handleViewRecords);
+          dom.clearDataBtn.addEventListener('click', app.handleClearData);
+          dom.generateAiTextBtn.addEventListener('click', app.handleGenerateAiReport);
+          dom.copyReportBtn.addEventListener('click', () => navigator.clipboard.writeText(dom.aiReportOutput.textContent).then(() => uiService.showModal('Copiado!', '<p>Relatório copiado para a área de transferência.</p>')));
+          dom.generatePdfBtn.addEventListener('click', app.handleGeneratePdf);
+
+          const attentionCard = document.querySelector('#attention-card');
+          if(attentionCard) {
+              attentionCard.addEventListener('mouseenter', () => clearInterval(messageIntervalId));
+              attentionCard.addEventListener('mouseleave', () => app.startRotatingMessages());
+          }
+
+          dom.mainModal.querySelectorAll('.close-btn').forEach(btn => btn.onclick = () => dom.mainModal.style.display = 'none');
+          dom.mainModal.onclick = (event) => { if (event.target === dom.mainModal) dom.mainModal.style.display = 'none'; };
+        },
+        handleFormSubmit: async (event) => {
+          event.preventDefault();
+          let isValid = true;
+          dom.form.querySelectorAll('[required]').forEach(input => {
+            if (!input.value.trim()) { isValid = false; input.style.borderColor = 'var(--danger-color)'; } 
+            else { input.style.borderColor = 'var(--border-color)'; }
+          });
+          if (!isValid) { uiService.showModal('Atenção!', '<p>Por favor, preencha todos os campos obrigatórios.</p>'); return; }
+
+          dom.registerBtn.disabled = true; dom.registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+          
+          const data = Object.fromEntries(new FormData(dom.form).entries());
+          delete data.foto;
+          data.timestamp = new Date().toLocaleString('pt-BR');
+          
+          try {
+            await dataService.addFeedback(data);
+            uiService.showModal('<i class="fas fa-check-circle"></i> Sucesso!', '<p>Registro de falha enviado com sucesso.</p>'); 
+            dom.form.reset(); 
+          } catch(e) {
+            console.error("Erro ao submeter:", e);
+            uiService.showModal('Erro', 'Não foi possível registrar a falha. Verifique sua conexão e tente novamente.');
+          } finally {
+            dom.registerBtn.disabled = false; dom.registerBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Falha'; 
+          }
+        },
+        handleViewRecords: () => {
+          let tableHtml = '<p>Nenhum registro encontrado.</p>';
+          if (allFeedbacks.length > 0) {
+            tableHtml = `<div style="max-height: 400px; overflow-y: auto;"><table id="recordsTable"><thead><tr><th>Data</th><th>Unidade</th><th>Qtde</th><th>Responsável</th><th>Comentário</th><th>Registro</th></tr></thead><tbody>${allFeedbacks.map(r => `<tr><td>${r.data||''}</td><td>${r.unidade||''}</td><td>${r.quantidade||''}</td><td>${r.responsavel||''}</td><td>${r.comentario||''}</td><td>${r.timestamp||''}</td></tr>`).join('')}</tbody></table></div>`;
+          }
+          uiService.showModal('<i class="fas fa-list-alt"></i> Registros Salvos', tableHtml);
+        },
+        handleClearData: async () => {
+            const password = prompt("Para apagar todos os dados, por favor, insira a senha:");
+            if (password === "Sup@4458") {
+                if (confirm("Tem certeza que deseja apagar TODOS os dados de falhas e visitas? Esta ação não pode ser desfeita.")) {
+                    try {
+                        await dataService.clearAllData();
+                        uiService.showModal('Sucesso', 'Todos os dados foram apagados.');
+                        location.reload();
+                    } catch (e) {
+                        console.error("Erro ao limpar dados:", e);
+                        uiService.showModal('Erro', 'Não foi possível apagar os dados.');
+                    }
+                }
+            } else if (password !== null) {
+                uiService.showModal('Acesso Negado', 'A senha inserida está incorreta.');
+            }
+        },
+        handleGenerateAiReport: async () => {
+          dom.generateAiTextBtn.disabled = true;
+          dom.generateAiTextBtn.innerHTML = '<div class="loader"></div> Gerando...';
+          dom.aiReportOutput.textContent = "Analisando dados e compilando o relatório...";
+          
+          if (allFeedbacks.length === 0) {
+            dom.aiReportOutput.textContent = "Não há dados para gerar um relatório.";
+            dom.generateAiTextBtn.disabled = false; dom.generateAiTextBtn.innerHTML = '<i class="fas fa-cogs"></i> Gerar Análise';
+            return;
+          }
+          const dataSummary = allFeedbacks.map(f => `Unidade: ${f.unidade}, Qtde: ${f.quantidade}, Desc: ${f.comentario}`).join('; ');
+          const prompt = `Aja como um analista de qualidade. Baseado nos dados de falhas de etiquetas a seguir, escreva um relatório formal e conciso para o fornecedor. O relatório deve: 1. Começar com uma saudação formal. 2. Apresentar um resumo do problema, incluindo total de falhas e de unidades afetadas. 3. Listar as unidades mais críticas. 4. Mencionar os tipos de problemas comuns. 5. Concluir solicitando uma análise e plano de ação. Assine como "Equipe de Suprimentos". Dados: ${dataSummary}`;
+          
+          try {
+            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+            const apiKey = ""; // Provided by environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
+            const result = await response.json();
+            const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!text) throw new Error("Resposta da IA em formato inesperado.");
+
+            dom.aiReportOutput.textContent = text;
+            dom.copyReportBtn.disabled = false;
+            dom.generatePdfBtn.disabled = false;
+          } catch (error) {
+            dom.aiReportOutput.textContent = `Ocorreu um erro ao gerar o relatório. Tente novamente.\nDetalhe: ${error.message}`;
+          } finally {
+            dom.generateAiTextBtn.disabled = false; dom.generateAiTextBtn.innerHTML = '<i class="fas fa-cogs"></i> Gerar Novamente';
+          }
+        },
+        handleGeneratePdf: async () => {
+          const btn = dom.generatePdfBtn;
+          btn.disabled = true; btn.innerHTML = '<div class="loader"></div> Gerando...';
+
+          const element = document.getElementById('report-content-to-print');
+          const opt = {
+            margin: 0.5, filename: 'relatorio_falhas_etiquetas.pdf', image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+          };
+          
+          Chart.defaults.animation.duration = 0;
+          uiService.drawReportCharts();
+
+          setTimeout(() => {
+            html2pdf().from(element).set(opt).save().then(() => {
+              btn.disabled = false; btn.innerHTML = '<i class="fas fa-file-pdf"></i> Gerar PDF';
+              Chart.defaults.animation.duration = 1000;
+              uiService.drawReportCharts();
+            });
+          }, 500);
+        }
+      };
+
+      // --- INICIALIZAÇÃO DA APLICAÇÃO ---
       app.init();
     });
   </script>
